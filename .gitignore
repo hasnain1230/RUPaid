@@ -130,3 +130,6 @@ dmypy.json
 
 # Remove IDEA Files
 .idea/
+
+# .DS_Store
+.DS_Store
