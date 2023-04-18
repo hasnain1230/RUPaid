@@ -1,0 +1,6 @@
+LOGIN_PAGE = "RUPAID Login"
+USERNAME_LABEL = "Username:"
+PASSWORD_LABEL = "Password:"
+LOGIN_BUTTON = "Login"
+SUCCESS_MESSAGE = "You have successfully logged in!"
+ERROR_MESSAGE = "Invalid username or password."
