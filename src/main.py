@@ -4,11 +4,28 @@ from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QPixmap
 from PyQt5.QtWidgets import *
 from constants import constants
-
+import mariadb
+from cryptography.hazmat.backends import default_backend
+from cryptography.hazmat.primitives import hashes
+from ScaledPixmapLabel import ScaledPixmapLabel
 
 class LoginPage(QWidget):
     def __init__(self):
         super().__init__()
+
+        try:
+            self.connection = mariadb.connect(
+                user='lucidity',
+                password='lucidity',
+                host='lucidityarch.com',
+                port=3306,
+                database='RUPaid'
+            )
+        except mariadb.Error as e:
+            print(f"Error connecting to MariaDB Platform: {e}")
+            QMessageBox.critical(self, "Connection Error", "Error connecting to database. Please try again later.", QMessageBox.Ok)
+            sys.exit(115)
+
         self.username_input = None
         self.password_input = None
         self.login_button = None
@@ -19,8 +36,10 @@ class LoginPage(QWidget):
 
         layout = QGridLayout()
 
-        RUPAID_logo = QLabel()
-        RUPAID_logo.setPixmap(QPixmap("../assets/test1.png")) # This is just a temporary logo I made with some AI image generator
+        self.setFixedSize(513, 369)
+
+        RUPAID_logo = ScaledPixmapLabel("../assets/RUPaid.png")
+        RUPAID_logo.setMinimumSize(493, 185)
         RUPAID_logo.setAlignment(Qt.AlignCenter)
         layout.addWidget(RUPAID_logo, 0, 0)
 
@@ -49,15 +68,38 @@ class LoginPage(QWidget):
 
         self.setLayout(layout)
 
+    def hash_password(self, password):
+        digest = hashes.Hash(hashes.SHA3_512(), backend=default_backend())
+        digest.update(password.encode())
+        return digest.finalize().hex()
+
     def login(self):
         username = self.username_input.text()
         password = self.password_input.text()
+        hashed_password = self.hash_password(password)
 
-        if username == "admin" and password == "password":
-            QMessageBox.information(self, "Success", "You have successfully logged in!")
+        cursor = self.connection.cursor()
+
+        try:
+            cursor.execute("SELECT * FROM users WHERE user_name = ? AND password = ?", (username, hashed_password))
+        except mariadb.Connection.Error as e:
+            QMessageBox.warning(self, "Error", f"Error connecting to database: {e}")
+            return
+
+        if cursor.fetchone() is not None:
+            print("Login successful")
+            QMessageBox.information(self, "Login successful", "Login successful")
         else:
-            QMessageBox.warning(self, "Error", "Invalid username or password.")
+            print("Login failed")
+            QMessageBox.warning(self, "Login failed!", "Login failed! Either your username or password is incorrect.")
 
+    def resizeEvent(self, event):
+        # This method is called when the window is resized
+        # You can add your resize listener logic here
+        print(f"Window resized: {event.size()}")
+
+        # Call the parent class's resizeEvent method
+        super().resizeEvent(event)
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
@@ -65,6 +107,6 @@ if __name__ == "__main__":
     # https://doc.qt.io/qt-5/qapplication.html#QApplication
     login_page = LoginPage()
     # Set the size of the window
-    login_page.resize(400, 200)
+
     login_page.show()
     sys.exit(app.exec_())
