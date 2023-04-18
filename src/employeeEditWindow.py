@@ -10,11 +10,17 @@
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 
+from dbConnection import DBConnection
+
 
 class Ui_EmployeeEditWindow(object):
-    def setupUi(self, EmployeeEditWindow, employee):
+    def setupUi(self, EmployeeEditWindow, SourceWindow, employee):
         EmployeeEditWindow.setObjectName("EmployeeEditWindow")
         EmployeeEditWindow.resize(402, 307)
+        self.win2 = EmployeeEditWindow
+        self.source = SourceWindow
+        self.employee = employee
+        self.dbConnection = DBConnection()
         self.centralwidget = QtWidgets.QWidget(EmployeeEditWindow)
         self.centralwidget.setObjectName("centralwidget")
         self.gridLayoutWidget = QtWidgets.QWidget(self.centralwidget)
@@ -65,10 +71,10 @@ class Ui_EmployeeEditWindow(object):
         self.textEdit_6.setObjectName("textEdit_6")
         self.textEdit_6.setText(employee.routingNumber)
         self.gridLayout.addWidget(self.textEdit_6, 5, 2, 1, 1)
-        self.pushButton = QtWidgets.QPushButton(self.centralwidget)
+        self.pushButton = QtWidgets.QPushButton(self.centralwidget, clicked = lambda: self.save())
         self.pushButton.setGeometry(QtCore.QRect(10, 230, 121, 26))
         self.pushButton.setObjectName("pushButton")
-        self.pushButton_2 = QtWidgets.QPushButton(self.centralwidget)
+        self.pushButton_2 = QtWidgets.QPushButton(self.centralwidget, clicked = lambda: self.cancel())
         self.pushButton_2.setGeometry(QtCore.QRect(260, 230, 121, 26))
         self.pushButton_2.setObjectName("pushButton_2")
         EmployeeEditWindow.setCentralWidget(self.centralwidget)
@@ -94,6 +100,25 @@ class Ui_EmployeeEditWindow(object):
         self.label.setText(_translate("EmployeeEditWindow", "First Name"))
         self.pushButton.setText(_translate("EmployeeEditWindow", "Save Changes"))
         self.pushButton_2.setText(_translate("EmployeeEditWindow", "Cancel Changes"))
+    
+    def save(self):
+        newFirst = self.textEdit.toPlainText()
+        newLast = self.textEdit_2.toPlainText()
+        newEmail = self.textEdit_3.toPlainText()
+        newUserName = self.textEdit_4.toPlainText()
+        newAccoutNum = self.textEdit_5.toPlainText()
+        newRoutingNum = self.textEdit_6.toPlainText()
+        self.dbConnection.updateEmployee(self.employee.id, newFirst, newLast, newEmail, newUserName, newAccoutNum, newRoutingNum)
+        from employerView import Ui_MainWindow
+        self.win = QtWidgets.QMainWindow()
+        self.ui = Ui_MainWindow()
+        self.ui.setupUi(self.win, self.win2)
+        
+        self.source.close()
+        self.win.show()
+        
+    def cancel(self):
+        self.win2.close()
 
 
 if __name__ == "__main__":

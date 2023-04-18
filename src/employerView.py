@@ -11,13 +11,15 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtWidgets import QTableWidgetItem
 from dbConnection import DBConnection
-from employeeEditWindow import Ui_EmployeeEditWindow
+
 from employee import Employee
 
 class Ui_MainWindow(object):
-    def setupUi(self, MainWindow):
+    def setupUi(self, MainWindow, source):
         MainWindow.setObjectName("RUPaid - Employer")
         MainWindow.resize(1068, 680)
+        self.win1 = MainWindow
+        source.close()
         self.dbConnection = DBConnection()
         self.centralwidget = QtWidgets.QWidget(MainWindow)
         self.centralwidget.setObjectName("centralwidget")
@@ -86,6 +88,7 @@ class Ui_MainWindow(object):
 
         self.retranslateUi(MainWindow)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
+        self.populateEmployees()
 
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
@@ -107,10 +110,11 @@ class Ui_MainWindow(object):
     def switchView(self):
         employee = self.getSelectedEmployee()
         self.win = QtWidgets.QMainWindow()
+        from employeeEditWindow import Ui_EmployeeEditWindow
         self.ui = Ui_EmployeeEditWindow()
-        self.ui.setupUi(self.win, employee)
+        self.ui.setupUi(self.win, self.win1, employee)
         self.win.show()
-    
+        
     def getSelectedEmployee(self):
         r = self.tableWidget.currentRow()
         if r >= 0:
@@ -124,4 +128,20 @@ class Ui_MainWindow(object):
         id, age, first, last, usrname,  password, role, occupation, email, accoutingNumber, routingNumber = res[0], res[1], res[2], res[3], res[4], res[5], res[6], res[7], res[8], res[9], res[10]
         emp = Employee(id, age, first, last, usrname,  password, role, occupation,email, accoutingNumber, routingNumber)
         return emp
+    
+    def populateEmployees(self):
+        cursor = self.dbConnection.selectNamesFromTable()
+        cursor.fetchall()
+        numRows = cursor.rowcount
+        cursor = self.dbConnection.selectNamesFromTable()
+
+        self.tableWidget.setRowCount(numRows)
+        self.tableWidget.setColumnCount(1)
+        self.tableWidget.setHorizontalHeaderLabels(['Name'])
+        self.tableWidget.setColumnWidth(0, 200)
+        
+        index = 0 
+        for employeeName in cursor:
+            self.tableWidget.setItem(index,0, QTableWidgetItem(f'{employeeName[1]},  {employeeName[0]}'))
+            index += 1
         

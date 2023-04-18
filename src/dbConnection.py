@@ -25,8 +25,7 @@ class DBConnection:
     def getEmployeeByName(self, first, last, table ='users2'):
         self.cursor.execute(f"SELECT * from {table} WHERE firstName = '{first}' and lastName = '{last}'")
         return self.cursor
-    
-    def insertIntoTest_Table(self,  name, age):
-        self.cursor.execute(f"INSERT INTO test_table (name, age) VALUES ('{name}', '{age}')")
+        
+    def updateEmployee(self, id, first, last, email, urn, account, routing):
+        self.cursor.execute(f"UPDATE users2 SET firstName = '{first}', lastName= '{last}', email= '{email}', user_name = '{urn}', bankAccountNumber = '{account}', bankRoutingNumber = '{routing}' WHERE id = {id}")
         self.db.commit()
-    
