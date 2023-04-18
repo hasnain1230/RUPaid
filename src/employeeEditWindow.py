@@ -12,7 +12,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 
 
 class Ui_EmployeeEditWindow(object):
-    def setupUi(self, EmployeeEditWindow):
+    def setupUi(self, EmployeeEditWindow, employee):
         EmployeeEditWindow.setObjectName("EmployeeEditWindow")
         EmployeeEditWindow.resize(402, 307)
         self.centralwidget = QtWidgets.QWidget(EmployeeEditWindow)
@@ -37,27 +37,33 @@ class Ui_EmployeeEditWindow(object):
         self.gridLayout.addWidget(self.label_3, 2, 1, 1, 1)
         self.textEdit_2 = QtWidgets.QTextEdit(self.gridLayoutWidget)
         self.textEdit_2.setObjectName("textEdit_2")
+        self.textEdit_2.setText(employee.last)
         self.gridLayout.addWidget(self.textEdit_2, 1, 2, 1, 1)
         self.label_2 = QtWidgets.QLabel(self.gridLayoutWidget)
         self.label_2.setObjectName("label_2")
         self.gridLayout.addWidget(self.label_2, 1, 1, 1, 1)
         self.textEdit = QtWidgets.QTextEdit(self.gridLayoutWidget)
         self.textEdit.setObjectName("textEdit")
+        self.textEdit.setText(employee.first)
         self.gridLayout.addWidget(self.textEdit, 0, 2, 1, 1)
         self.label = QtWidgets.QLabel(self.gridLayoutWidget)
         self.label.setObjectName("label")
         self.gridLayout.addWidget(self.label, 0, 1, 1, 1)
         self.textEdit_3 = QtWidgets.QTextEdit(self.gridLayoutWidget)
         self.textEdit_3.setObjectName("textEdit_3")
+        self.textEdit_3.setText(employee.email)
         self.gridLayout.addWidget(self.textEdit_3, 2, 2, 1, 1)
         self.textEdit_4 = QtWidgets.QTextEdit(self.gridLayoutWidget)
         self.textEdit_4.setObjectName("textEdit_4")
+        self.textEdit_4.setText(employee.userName)
         self.gridLayout.addWidget(self.textEdit_4, 3, 2, 1, 1)
         self.textEdit_5 = QtWidgets.QTextEdit(self.gridLayoutWidget)
         self.textEdit_5.setObjectName("textEdit_5")
+        self.textEdit_5.setText(employee.accountNumber)
         self.gridLayout.addWidget(self.textEdit_5, 4, 2, 1, 1)
         self.textEdit_6 = QtWidgets.QTextEdit(self.gridLayoutWidget)
         self.textEdit_6.setObjectName("textEdit_6")
+        self.textEdit_6.setText(employee.routingNumber)
         self.gridLayout.addWidget(self.textEdit_6, 5, 2, 1, 1)
         self.pushButton = QtWidgets.QPushButton(self.centralwidget)
         self.pushButton.setGeometry(QtCore.QRect(10, 230, 121, 26))
@@ -79,13 +85,13 @@ class Ui_EmployeeEditWindow(object):
 
     def retranslateUi(self, EmployeeEditWindow):
         _translate = QtCore.QCoreApplication.translate
-        EmployeeEditWindow.setWindowTitle(_translate("EmployeeEditWindow", "MainWindow"))
-        self.label_6.setText(_translate("EmployeeEditWindow", "TextLabel"))
-        self.label_5.setText(_translate("EmployeeEditWindow", "TextLabel"))
-        self.label_4.setText(_translate("EmployeeEditWindow", "TextLabel"))
-        self.label_3.setText(_translate("EmployeeEditWindow", "TextLabel"))
-        self.label_2.setText(_translate("EmployeeEditWindow", "TextLabel"))
-        self.label.setText(_translate("EmployeeEditWindow", "TextLabel"))
+        EmployeeEditWindow.setWindowTitle(_translate("EmployeeEditWindow", "Edit Employee"))
+        self.label_6.setText(_translate("EmployeeEditWindow", "Routing Number"))
+        self.label_5.setText(_translate("EmployeeEditWindow", "Account Number"))
+        self.label_4.setText(_translate("EmployeeEditWindow", "User Name"))
+        self.label_3.setText(_translate("EmployeeEditWindow", "Email"))
+        self.label_2.setText(_translate("EmployeeEditWindow", "Last Name"))
+        self.label.setText(_translate("EmployeeEditWindow", "First Name"))
         self.pushButton.setText(_translate("EmployeeEditWindow", "Save Changes"))
         self.pushButton_2.setText(_translate("EmployeeEditWindow", "Cancel Changes"))
 

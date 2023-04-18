@@ -10,27 +10,31 @@
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtWidgets import QTableWidgetItem
+from dbConnection import DBConnection
 from employeeEditWindow import Ui_EmployeeEditWindow
+from employee import Employee
 
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
-        MainWindow.setObjectName("MainWindow")
+        MainWindow.setObjectName("RUPaid - Employer")
         MainWindow.resize(1068, 680)
+        self.dbConnection = DBConnection()
         self.centralwidget = QtWidgets.QWidget(MainWindow)
         self.centralwidget.setObjectName("centralwidget")
         self.label = QtWidgets.QLabel(self.centralwidget)
         self.label.setGeometry(QtCore.QRect(10, 10, 171, 31))
         self.label.setObjectName("label")
-        self.pushButton = QtWidgets.QPushButton(self.centralwidget, clicked = lambda: self.switchView())
+        self.pushButton = QtWidgets.QPushButton(self.centralwidget)
         self.pushButton.setGeometry(QtCore.QRect(980, 10, 81, 26))
         self.pushButton.setObjectName("pushButton")
         self.tableWidget = QtWidgets.QTableWidget(self.centralwidget)
-        self.tableWidget.setGeometry(QtCore.QRect(10, 60, 281, 491))
+        self.tableWidget.setGeometry(QtCore.QRect(10, 60, 218, 381))
         self.tableWidget.setObjectName("tableWidget")
         self.tableWidget.setColumnCount(0)
         self.tableWidget.setRowCount(0)
         self.lineEdit = QtWidgets.QLineEdit(self.centralwidget)
         self.lineEdit.setGeometry(QtCore.QRect(170, 20, 231, 22))
+        self.lineEdit.setPlaceholderText("Search for Employee")
         self.lineEdit.setObjectName("lineEdit")
         self.pushButton_2 = QtWidgets.QPushButton(self.centralwidget)
         self.pushButton_2.setGeometry(QtCore.QRect(10, 570, 161, 51))
@@ -62,7 +66,7 @@ class Ui_MainWindow(object):
         self.pushButton_3 = QtWidgets.QPushButton(self.centralwidget)
         self.pushButton_3.setGeometry(QtCore.QRect(570, 490, 231, 51))
         self.pushButton_3.setObjectName("pushButton_3")
-        self.pushButton_4 = QtWidgets.QPushButton(self.centralwidget)
+        self.pushButton_4 = QtWidgets.QPushButton(self.centralwidget, clicked = lambda: self.switchView())
         self.pushButton_4.setGeometry(QtCore.QRect(810, 490, 231, 51))
         self.pushButton_4.setObjectName("pushButton_4")
         self.pushButton_5 = QtWidgets.QPushButton(self.centralwidget)
@@ -85,7 +89,7 @@ class Ui_MainWindow(object):
 
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
-        MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
+        MainWindow.setWindowTitle(_translate("MainWindow", "RUPaid - Employer"))
         self.label.setText(_translate("MainWindow", "Welcome,  User!"))
         self.pushButton.setText(_translate("MainWindow", "Log Out"))
         self.pushButton_2.setText(_translate("MainWindow", "Create New Employee"))
@@ -101,8 +105,23 @@ class Ui_MainWindow(object):
         self.pushButton_6.setText(_translate("MainWindow", "View W-4"))
         
     def switchView(self):
-            self.win = QtWidgets.QMainWindow()
-            self.ui = Ui_EmployeeEditWindow()
-            self.ui.setupUi(self.win)
-            self.win.show()
+        employee = self.getSelectedEmployee()
+        self.win = QtWidgets.QMainWindow()
+        self.ui = Ui_EmployeeEditWindow()
+        self.ui.setupUi(self.win, employee)
+        self.win.show()
     
+    def getSelectedEmployee(self):
+        r = self.tableWidget.currentRow()
+        if r >= 0:
+            name = self.tableWidget.item(r,0).text()
+        tokens = name.split(",")
+
+        first, last = tokens[1].replace(" ", ""), tokens[0].replace(" ", "")
+        cursor = self.dbConnection.getEmployeeByName(first, last)
+        res = cursor.fetchall()[0]
+        
+        id, age, first, last, usrname,  password, role, occupation, email, accoutingNumber, routingNumber = res[0], res[1], res[2], res[3], res[4], res[5], res[6], res[7], res[8], res[9], res[10]
+        emp = Employee(id, age, first, last, usrname,  password, role, occupation,email, accoutingNumber, routingNumber)
+        return emp
+        
