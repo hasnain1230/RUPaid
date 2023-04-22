@@ -8,24 +8,16 @@ import mariadb
 from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives import hashes
 from ScaledPixmapLabel import ScaledPixmapLabel
+from dbConnection import DBConnection
+from employeeController import EmployeeMainController
+from src.employerController import EmployerMainController
+
 
 class LoginPage(QWidget):
     def __init__(self):
         super().__init__()
-
-        try:
-            self.connection = mariadb.connect(
-                user='lucidity',
-                password='lucidity',
-                host='lucidityarch.com',
-                port=3306,
-                database='RUPaid'
-            )
-        except mariadb.Error as e:
-            print(f"Error connecting to MariaDB Platform: {e}")
-            QMessageBox.critical(self, "Connection Error", "Error connecting to database. Please try again later.", QMessageBox.Ok)
-            sys.exit(115)
-
+        database_connection = DBConnection()
+        self.cursor = database_connection.get_cursor()
         self.username_input = None
         self.password_input = None
         self.login_button = None
@@ -78,17 +70,26 @@ class LoginPage(QWidget):
         password = self.password_input.text()
         hashed_password = self.hash_password(password)
 
-        cursor = self.connection.cursor()
-
         try:
-            cursor.execute("SELECT * FROM users WHERE user_name = ? AND password = ?", (username, hashed_password))
+            self.cursor.execute("SELECT * FROM users WHERE user_name = ? AND password = ?", (username, hashed_password))
+            results = self.cursor.fetchone()
         except mariadb.Connection.Error as e:
             QMessageBox.warning(self, "Error", f"Error connecting to database: {e}")
             return
 
-        if cursor.fetchone() is not None:
+        if results is not None:
             print("Login successful")
             QMessageBox.information(self, "Login successful", "Login successful")
+
+            if results[7].lower() == "employee":
+                self.employee_controller = EmployeeMainController()
+                self.employee_controller.show()
+                self.close()
+            elif results[7].lower() == "employer":
+                self.employer_controller = EmployerMainController()
+                self.employer_controller.show()
+                self.close()
+                
         else:
             print("Login failed")
             QMessageBox.warning(self, "Login failed!", "Login failed! Either your username or password is incorrect.")
@@ -100,13 +101,3 @@ class LoginPage(QWidget):
 
         # Call the parent class's resizeEvent method
         super().resizeEvent(event)
-
-if __name__ == "__main__":
-    app = QApplication(sys.argv)
-    # What arguments can be passed to QApplication?
-    # https://doc.qt.io/qt-5/qapplication.html#QApplication
-    login_page = LoginPage()
-    # Set the size of the window
-
-    login_page.show()
-    sys.exit(app.exec_())

@@ -108,7 +108,7 @@ class Ui_EmployeeEditWindow(object):
         newUserName = self.textEdit_4.toPlainText()
         newAccoutNum = self.textEdit_5.toPlainText()
         newRoutingNum = self.textEdit_6.toPlainText()
-        self.dbConnection.updateEmployee(self.employee.id, newFirst, newLast, newEmail, newUserName, newAccoutNum, newRoutingNum)
+        self.dbConnection.update_employee(self.employee.id, newFirst, newLast, newEmail, newUserName, newAccoutNum, newRoutingNum)
         from employerView import Ui_MainWindow
         self.win = QtWidgets.QMainWindow()
         self.ui = Ui_MainWindow()

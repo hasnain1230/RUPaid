@@ -1,31 +1,40 @@
-import mysql.connector
+import sys
+
+import mariadb
+from PyQt5.QtWidgets import QMessageBox, QWidget
 
 
-class DBConnection:
+class DBConnection(QWidget):
     def __init__(self):
-        self.db = mysql.connector.connect(
-            host = 'lucidityarch.com',
-            user = 'allimg',
-            passwd = 'allimg',
-            database = 'RUPaid'
-        )
-        self.cursor = self.db.cursor()
-    
-    def executeQuery(self, query):
-        return self.cursor.execute(query)
-        
-    def selectFromTable(self, table = 'users2'):
-        self.cursor.execute(f'SELECT * FROM {table}')
+        super().__init__()
+        try:
+            self.db = mariadb.connect(
+                user='lucidity',
+                password='lucidity',
+                host='lucidityarch.com',
+                port=3306,
+                database='RUPaid'
+            )
+            self.cursor = self.db.cursor()
+        except mariadb.Error as e:
+            print(f"Error connecting to MariaDB Platform: {e}")
+            QMessageBox.critical(self, "Connection Error", "Error connecting to database. Please try again later.",
+                                 QMessageBox.Ok)
+            sys.exit(115)
+
+    def get_cursor(self):
         return self.cursor
-    
-    def selectNamesFromTable(self, table = 'users2'):
+
+    def select_names_from_table(self, table='users'):
         self.cursor.execute(f'SELECT firstName, lastName FROM {table}')
         return self.cursor
-    
-    def getEmployeeByName(self, first, last, table ='users2'):
+
+    def get_employee_by_name(self, first, last, table='users'):
         self.cursor.execute(f"SELECT * from {table} WHERE firstName = '{first}' and lastName = '{last}'")
         return self.cursor
-        
-    def updateEmployee(self, id, first, last, email, urn, account, routing):
-        self.cursor.execute(f"UPDATE users2 SET firstName = '{first}', lastName= '{last}', email= '{email}', user_name = '{urn}', bankAccountNumber = '{account}', bankRoutingNumber = '{routing}' WHERE id = {id}")
+
+    def update_employee(self, id, first, last, email, urn, account, routing):
+        sql = "UPDATE users SET firstName = %s, lastName = %s, email = %s, user_name = %s, bankAccountNumber = %s, bankRoutingNumber = %s WHERE id = %s"
+        values = (first, last, email, urn, account, routing, id)
+        self.cursor.execute(sql, values)
         self.db.commit()

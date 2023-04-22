@@ -14,6 +14,7 @@ from dbConnection import DBConnection
 
 from employee import Employee
 
+
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow, source):
         MainWindow.setObjectName("RUPaid - Employer")
@@ -68,7 +69,7 @@ class Ui_MainWindow(object):
         self.pushButton_3 = QtWidgets.QPushButton(self.centralwidget)
         self.pushButton_3.setGeometry(QtCore.QRect(570, 490, 231, 51))
         self.pushButton_3.setObjectName("pushButton_3")
-        self.pushButton_4 = QtWidgets.QPushButton(self.centralwidget, clicked = lambda: self.switchView())
+        self.pushButton_4 = QtWidgets.QPushButton(self.centralwidget, clicked=lambda: self.switchView())
         self.pushButton_4.setGeometry(QtCore.QRect(810, 490, 231, 51))
         self.pushButton_4.setObjectName("pushButton_4")
         self.pushButton_5 = QtWidgets.QPushButton(self.centralwidget)
@@ -106,7 +107,7 @@ class Ui_MainWindow(object):
         self.pushButton_4.setText(_translate("MainWindow", "Edit Employee"))
         self.pushButton_5.setText(_translate("MainWindow", "View Hours"))
         self.pushButton_6.setText(_translate("MainWindow", "View W-4"))
-        
+
     def switchView(self):
         employee = self.getSelectedEmployee()
         self.win = QtWidgets.QMainWindow()
@@ -114,34 +115,34 @@ class Ui_MainWindow(object):
         self.ui = Ui_EmployeeEditWindow()
         self.ui.setupUi(self.win, self.win1, employee)
         self.win.show()
-        
+
     def getSelectedEmployee(self):
         r = self.tableWidget.currentRow()
         if r >= 0:
-            name = self.tableWidget.item(r,0).text()
+            name = self.tableWidget.item(r, 0).text()
         tokens = name.split(",")
 
         first, last = tokens[1].replace(" ", ""), tokens[0].replace(" ", "")
-        cursor = self.dbConnection.getEmployeeByName(first, last)
+        cursor = self.dbConnection.get_employee_by_name(first, last)
         res = cursor.fetchall()[0]
-        
-        id, age, first, last, usrname,  password, role, occupation, email, accoutingNumber, routingNumber = res[0], res[1], res[2], res[3], res[4], res[5], res[6], res[7], res[8], res[9], res[10]
-        emp = Employee(id, age, first, last, usrname,  password, role, occupation,email, accoutingNumber, routingNumber)
+
+        id, age, first, last, usrname, password, role, occupation, email, accoutingNumber, routingNumber = res[0], res[
+            1], res[2], res[3], res[4], res[5], res[6], res[7], res[8], res[9], res[10]
+        emp = Employee(id, age, first, last, usrname, password, role, occupation, email, accoutingNumber, routingNumber)
         return emp
-    
+
     def populateEmployees(self):
-        cursor = self.dbConnection.selectNamesFromTable()
+        cursor = self.dbConnection.select_names_from_table()
         cursor.fetchall()
         numRows = cursor.rowcount
-        cursor = self.dbConnection.selectNamesFromTable()
+        cursor = self.dbConnection.select_names_from_table()
 
         self.tableWidget.setRowCount(numRows)
         self.tableWidget.setColumnCount(1)
         self.tableWidget.setHorizontalHeaderLabels(['Name'])
         self.tableWidget.setColumnWidth(0, 200)
-        
-        index = 0 
+
+        index = 0
         for employeeName in cursor:
-            self.tableWidget.setItem(index,0, QTableWidgetItem(f'{employeeName[1]},  {employeeName[0]}'))
+            self.tableWidget.setItem(index, 0, QTableWidgetItem(f'{employeeName[1]},  {employeeName[0]}'))
             index += 1
-        
