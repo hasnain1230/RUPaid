@@ -125,10 +125,11 @@ class Ui_MainWindow(object):
         first, last = tokens[1].replace(" ", ""), tokens[0].replace(" ", "")
         cursor = self.dbConnection.get_employee_by_name(first, last)
         res = cursor.fetchall()[0]
+        print(res)
 
-        id, age, first, last, usrname, password, role, occupation, email, accoutingNumber, routingNumber = res[0], res[
-            1], res[2], res[3], res[4], res[5], res[6], res[7], res[8], res[9], res[10]
-        emp = Employee(id, age, first, last, usrname, password, role, occupation, email, accoutingNumber, routingNumber)
+        company, companyid, userid, usrname, password, first, last, role, age, occupation, email, accoutingNumber, routingNumber = res[0], res[
+            1], res[2], res[3], res[4], res[5], res[6], res[7], res[8], res[9], res[10], res[11], res[12]
+        emp = Employee(company, companyid, userid, usrname, password, first, last, role, age, occupation, email, accoutingNumber, routingNumber)
         return emp
 
     def populateEmployees(self):

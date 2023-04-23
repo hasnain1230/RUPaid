@@ -10,7 +10,7 @@ from cryptography.hazmat.primitives import hashes
 from ScaledPixmapLabel import ScaledPixmapLabel
 from dbConnection import DBConnection
 from employeeController import EmployeeMainController
-from src.employerController import EmployerMainController
+from employerController import EmployerMainController
 
 
 class LoginPage(QWidget):
@@ -78,6 +78,7 @@ class LoginPage(QWidget):
             return
 
         if results is not None:
+            print(results)
             print("Login successful")
             QMessageBox.information(self, "Login successful", "Login successful")
 
@@ -89,7 +90,6 @@ class LoginPage(QWidget):
                 self.employer_controller = EmployerMainController()
                 self.employer_controller.show()
                 self.close()
-                
         else:
             print("Login failed")
             QMessageBox.warning(self, "Login failed!", "Login failed! Either your username or password is incorrect.")
