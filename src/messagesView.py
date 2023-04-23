@@ -20,9 +20,9 @@ class Ui_MessagesWindow(object):
         self.userID = userid
         self.centralwidget = QtWidgets.QWidget(MessagesWindow)
         self.centralwidget.setObjectName("centralwidget")
-        self.listView = QtWidgets.QListView(self.centralwidget)
-        self.listView.setGeometry(QtCore.QRect(0, 0, 431, 411))
-        self.listView.setObjectName("listView")
+        self.listWidget = QtWidgets.QListWidget(self.centralwidget)
+        self.listWidget.setGeometry(QtCore.QRect(0, 0, 431, 411))
+        self.listWidget.setObjectName("listView")
         MessagesWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MessagesWindow)
         self.menubar.setGeometry(QtCore.QRect(0, 0, 430, 21))
@@ -33,7 +33,7 @@ class Ui_MessagesWindow(object):
         MessagesWindow.setStatusBar(self.statusbar)
 
         self.retranslateUi(MessagesWindow)
-        
+        self.populateList()
         QtCore.QMetaObject.connectSlotsByName(MessagesWindow)
 
     def retranslateUi(self, MessagesWindow):
@@ -42,8 +42,11 @@ class Ui_MessagesWindow(object):
         
     def populateList(self):
         cursor = self.dbConnection.get_messages(self.userID)
+        msgs = []
         for entitity in cursor:
-            message = e
+            msgs.append(entitity[3])
+        self.listWidget.addItems(msgs)
+        
 
 if __name__ == "__main__":
     import sys

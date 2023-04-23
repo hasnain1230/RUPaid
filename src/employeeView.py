@@ -13,6 +13,7 @@ from PyQt5.QtWidgets import QTableWidgetItem
 from dbConnection import DBConnection
 
 from employee import Employee
+from messagesView import Ui_MessagesWindow
 
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow, source):
@@ -95,7 +96,10 @@ class Ui_MainWindow(object):
         self.pushButton_6.setText(_translate("MainWindow", "View Notifications"))
     
     def viewNotif(self):
-        return
+        self.newWin = QtWidgets.QMainWindow()
+        self.ui = Ui_MessagesWindow()
+        self.ui.setupUi(self.newWin, 6)
+        self.newWin.show()
     
     def viewProfile(self):
         #employee = self.getSelectedEmployee()

@@ -40,6 +40,12 @@ class DBConnection(QWidget):
         self.db.commit()
 
     def get_messages(self, userid):
-        sql = "SELECT * FROM messages WHERE user_ud = %s"
-        self.cursor.execute(sql, userid)
+        sql = f"SELECT * FROM messages WHERE user_id = '{userid}'"
+        self.cursor.execute(sql)
         return self.cursor
+    
+    def insert_msg(self, userid, msglength, msg):
+        sql = f"INSERT INTO messages (user_id, message_length, message, is_checked) VALUES ({userid}, {msglength}, '{msg}', 0)"
+        self.cursor.execute(sql)
+        self.db.commit()
+        return

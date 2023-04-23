@@ -124,7 +124,11 @@ class Ui_MainWindow(object):
 
         first, last = tokens[1].replace(" ", ""), tokens[0].replace(" ", "")
         cursor = self.dbConnection.get_employee_by_name(first, last)
-        res = cursor.fetchall()[0]
+        res = cursor.fetchall()
+        if(res == []):
+            return Employee(None, None, None, None, None, None, None, None, None, None, None, None, None)
+        print(res)
+        res = res[0]
         print(res)
 
         company, companyid, userid, usrname, password, first, last, role, age, occupation, email, accoutingNumber, routingNumber = res[0], res[
