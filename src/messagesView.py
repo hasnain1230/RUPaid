@@ -10,7 +10,10 @@
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 from dbConnection import DBConnection
-
+from PyQt5.QtWidgets import *
+from PyQt5 import QtCore, QtGui
+from PyQt5.QtGui import *
+from PyQt5.QtCore import *
 
 class Ui_MessagesWindow(object):
     def setupUi(self, MessagesWindow, userid):
@@ -42,10 +45,22 @@ class Ui_MessagesWindow(object):
         
     def populateList(self):
         cursor = self.dbConnection.get_messages(self.userID)
-        msgs = []
+        firstNewMessage = True
         for entitity in cursor:
-            msgs.append(entitity[3])
-        self.listWidget.addItems(msgs)
+            print(entitity)
+            msg = entitity[3]
+            checked = int(entitity[4])
+            item = QtWidgets.QListWidgetItem()
+            if(checked):
+                if(firstNewMessage):
+                    firstNewMessage = False
+                    item.setText("NEW MESSAGES")
+                    item.setTextAlignment(Qt.AlignHCenter)
+                else:
+                    item.setText(msg)
+            else:
+                item.setText(msg)
+            self.listWidget.addItem(item)
         
 
 if __name__ == "__main__":
