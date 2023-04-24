@@ -19,6 +19,7 @@ class Ui_MessagesWindow(object):
     def setupUi(self, MessagesWindow, userid):
         MessagesWindow.setObjectName("MessagesWindow")
         MessagesWindow.resize(430, 475)
+        MessagesWindow.setFixedSize(430, 475)
         self.dbConnection = DBConnection()
         self.userID = userid
         self.centralwidget = QtWidgets.QWidget(MessagesWindow)
