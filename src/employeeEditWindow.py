@@ -10,13 +10,14 @@
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 
-from dbConnection import DBConnection
+from DatabaseConnection import DBConnection
 
 
 class Ui_EmployeeEditWindow(object):
     def setupUi(self, EmployeeEditWindow, SourceWindow, employee):
         EmployeeEditWindow.setObjectName("EmployeeEditWindow")
         EmployeeEditWindow.resize(402, 307)
+        EmployeeEditWindow.setFixedSize()
         self.win2 = EmployeeEditWindow
         self.source = SourceWindow
         self.employee = employee

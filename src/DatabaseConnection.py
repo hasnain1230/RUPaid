@@ -9,8 +9,8 @@ class DBConnection(QWidget):
         super().__init__()
         try:
             self.db = mariadb.connect(
-                user='lucidity',
-                password='lucidity',
+                user='RUPaid',
+                password='RUPaid',
                 host='lucidityarch.com',
                 port=3306,
                 database='RUPaid'
@@ -37,4 +37,7 @@ class DBConnection(QWidget):
         sql = "UPDATE users SET firstName = %s, lastName = %s, email = %s, user_name = %s, bankAccountNumber = %s, bankRoutingNumber = %s WHERE id = %s"
         values = (first, last, email, urn, account, routing, id)
         self.cursor.execute(sql, values)
+        self.db.commit()
+
+    def commit_transaction(self):
         self.db.commit()

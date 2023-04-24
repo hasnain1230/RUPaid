@@ -8,14 +8,16 @@ import mariadb
 from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives import hashes
 from ScaledPixmapLabel import ScaledPixmapLabel
-from dbConnection import DBConnection
-from employeeController import EmployeeMainController
-from src.employerController import EmployerMainController
+from DatabaseConnection import DBConnection
+from EmployeeController import EmployeeController
+
 
 
 class LoginPage(QWidget):
     def __init__(self):
         super().__init__()
+        self.employee_controller = None
+        self.employer_controller = None
         database_connection = DBConnection()
         self.cursor = database_connection.get_cursor()
         self.username_input = None
@@ -82,13 +84,11 @@ class LoginPage(QWidget):
             QMessageBox.information(self, "Login successful", "Login successful")
 
             if results[7].lower() == "employee":
-                self.employee_controller = EmployeeMainController()
-                self.employee_controller.show()
                 self.close()
+                self.employee_controller = EmployeeController(results)
             elif results[7].lower() == "employer":
-                self.employer_controller = EmployerMainController()
-                self.employer_controller.show()
-                self.close()
+                pass
+                # self.employer_controller = EmployerMainController()
                 
         else:
             print("Login failed")
