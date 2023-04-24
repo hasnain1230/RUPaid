@@ -1,6 +1,7 @@
 from setuptools import setup
 
-APP = ['src/Login.py']
+
+APP = ['src/runner.py']
 DATA_FILES = [
     ('../assets', ['assets/RUPAID_temp.png', 'assets/test1.png']),
     ('constants', ['src/constants/constants.py']),
