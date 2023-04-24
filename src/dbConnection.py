@@ -49,3 +49,16 @@ class DBConnection(QWidget):
         self.cursor.execute(sql)
         self.db.commit()
         return
+    
+    def get_last_punch(self, userid):
+        sql = f"SELECT date, type from employee_punchs WHERE user_id = {userid} order by date DESC limit 1"
+        self.cursor.execute(sql)
+        return self.cursor.fetchall()[0][1]
+    
+    def punch(self, userid, type):
+        from datetime import datetime as d
+        date = d.now()
+        sql = f"Insert into employee_punchs (user_id, type, date) values ({userid}, '{type}', '{date}')"
+        self.cursor.execute(sql)
+        self.db.commit()
+        
