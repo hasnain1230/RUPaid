@@ -11,7 +11,7 @@ class DBConnection(QWidget):
             self.db = mariadb.connect(
                 user='RUPaid',
                 password='RUPaid',
-                host='lucidityarch.com',
+                host='192.168.1.116',
                 port=3306,
                 database='RUPaid'
             )

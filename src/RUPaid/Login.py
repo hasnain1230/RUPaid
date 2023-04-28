@@ -1,15 +1,12 @@
-import sys
-
 from PyQt5.QtCore import Qt
-from PyQt5.QtGui import QPixmap
 from PyQt5.QtWidgets import *
-from constants import constants
+from src.constants import constants
 import mariadb
 from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives import hashes
 from ScaledPixmapLabel import ScaledPixmapLabel
 from DatabaseConnection import DBConnection
-from EmployeeController import EmployeeController
+from src.employee.EmployeeController import EmployeeController
 
 
 
@@ -89,7 +86,7 @@ class LoginPage(QWidget):
             elif results[7].lower() == "employer":
                 pass
                 # self.employer_controller = EmployerMainController()
-                
+
         else:
             print("Login failed")
             QMessageBox.warning(self, "Login failed!", "Login failed! Either your username or password is incorrect.")
