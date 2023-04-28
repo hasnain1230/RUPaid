@@ -9,6 +9,7 @@ from src.employee.ChangePasswordWindow import ChangePasswordWindow
 class EmployeeView(QWidget):
     def __init__(self, controller):
         super(EmployeeView, self).__init__()
+        self.change_password_dialog = None
         self.change_password_button = None
         self.edit_button = None
         self.grid_layout = None
@@ -191,7 +192,7 @@ class EmployeeView(QWidget):
         self.clock_in_button.clicked.connect(self.clock_in)
 
     def change_password(self):
-        self.change_password_dialog = ChangePasswordWindow()
+        self.change_password_dialog = ChangePasswordWindow(self.controller)
         self.change_password_dialog.show()
 
     def eventFilter(self, a0: 'QObject', a1: 'QEvent') -> bool:

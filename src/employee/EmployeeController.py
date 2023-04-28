@@ -1,4 +1,6 @@
 from PyQt5 import QtWidgets
+
+from src.RUPaid.Crypt import Hashing
 from src.employee.EmployeeView import EmployeeView
 from src.RUPaid.DatabaseConnection import DBConnection
 
@@ -20,6 +22,7 @@ class EmployeeController:
         self.account_number = "*" * (len(employee_data[11]) - 4) + employee_data[11][-4:]
         self.routing_number = employee_data[12]
         self.db_connection = DBConnection()
+        self.login_page = None
 
         self.ui = EmployeeView(self)
         self.ui.show()
@@ -68,9 +71,21 @@ class EmployeeController:
         cursor.execute(query, (user_id,))
         return cursor.fetchone()[0]
 
+    def check_password(self, password):
+        query = "SELECT password FROM users WHERE user_id = ?"
+        cursor = self.db_connection.get_cursor()
+        cursor.execute(query, (self.user_id,))
+        return cursor.fetchone()[0] == Hashing.hash_password(password)
+
+    def update_password(self, password):
+        query = "UPDATE users SET password = ? WHERE user_id = ?"
+        cursor = self.db_connection.get_cursor()
+        cursor.execute(query, (Hashing.hash_password(password), self.user_id))
+        self.db_connection.commit_transaction()
+
     def logout(self):
         self.ui.close()
         from src.RUPaid.Login import LoginPage
-        # Load the login page
-        login_page = LoginPage()
-        login_page.show()
+        self.login_page = LoginPage()
+        self.login_page.show()
+
