@@ -1,4 +1,0 @@
-mariadb~=1.1.6
-PyQt5~=5.15.9
-cryptography==40.0.2
-setuptools==67.6.1

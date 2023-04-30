@@ -1,3 +1,5 @@
+import os.path
+
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import *
 from src.constants import constants
@@ -30,7 +32,7 @@ class LoginPage(QWidget):
 
         self.setFixedSize(513, 369)
 
-        RUPAID_logo = ScaledPixmapLabel("../assets/RUPaid.png")
+        RUPAID_logo = ScaledPixmapLabel(f"..{os.path.sep}assets{os.path.sep}RUPaid.png")
         RUPAID_logo.setMinimumSize(493, 185)
         RUPAID_logo.setAlignment(Qt.AlignCenter)
         layout.addWidget(RUPAID_logo, 0, 0)

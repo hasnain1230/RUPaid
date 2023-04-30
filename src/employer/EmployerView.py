@@ -52,6 +52,10 @@ class EmployerView(QWidget):
         divider.setStyleSheet("background-color: gray; height: 1px;")
         layout.addWidget(divider, alignment=QtCore.Qt.AlignTop, stretch=1)
 
+        table_labels = [
+            
+        ]
+
         # Add a table for the employees
         self.table = QTableWidget()
         self.table.setColumnCount(4)
@@ -67,15 +71,6 @@ class EmployerView(QWidget):
         self.table.setShowGrid(False)
         self.table.setStyleSheet("QTableWidget::item { padding: 10px; }")
 
-        self.table.setItem(0, 0, QTableWidgetItem("John"))
-        self.table.setItem(0, 1, QTableWidgetItem("Doe"))
-        self.table.setItem(0, 2, QTableWidgetItem("Something"))
-        self.table.setItem(0, 3, QTableWidgetItem("Something else"))
-
-        self.table.setItem(1, 0, QTableWidgetItem("John"))
-        self.table.setItem(1, 1, QTableWidgetItem("Doe"))
-        self.table.setItem(1, 2, QTableWidgetItem("Something"))
-        self.table.setItem(1, 3, QTableWidgetItem("Something else"))
 
 
         layout.addWidget(self.table, stretch=10)
