@@ -8,6 +8,7 @@ from datetime import datetime
 class DBConnection(QWidget):
     def __init__(self):
         super().__init__()
+<<<<<<< HEAD
         try:
             self.db = mariadb.connect(
                 user='RUPaid',
@@ -19,9 +20,35 @@ class DBConnection(QWidget):
             self.cursor = self.db.cursor()
         except mariadb.Error as e:
             print(f"Error connecting to MariaDB Platform: {e}")
+=======
+
+        host_names = ['lucidityarch.com', '192.168.1.116']
+
+        self.db = None
+        self.cursor = None
+
+        for name in host_names:
+            print(name)
+            try:
+                self.db = mariadb.connect(
+                    user='RUPaid',
+                    password='RUPaid',
+                    host=name,
+                    port=3306,
+                    database='RUPaid'
+                )
+                self.cursor = self.db.cursor()
+                break
+            except mariadb.Error as e:
+                print(f"Error connecting to MariaDB Platform: {e}. Trying next host...")
+                continue
+
+        if self.cursor is None:
+>>>>>>> start
             QMessageBox.critical(self, "Connection Error", "Error connecting to database. Please try again later.",
                                  QMessageBox.Ok)
             sys.exit(115)
+
 
     def get_cursor(self):
         return self.cursor

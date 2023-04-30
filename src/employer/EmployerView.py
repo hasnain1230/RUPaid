@@ -1,7 +1,5 @@
-import sys
-
 from PyQt5 import QtWidgets, QtCore
-from PyQt5.QtWidgets import QApplication, QWidget, QVBoxLayout, QLabel, QTableWidget, QTableWidgetItem, \
+from PyQt5.QtWidgets import QWidget, QTableWidget, \
     QAbstractItemView
 from PyQt5.QtGui import QFontDatabase
 
@@ -71,15 +69,8 @@ class EmployerView(QWidget):
         self.table.setShowGrid(False)
         self.table.setStyleSheet("QTableWidget::item { padding: 10px; }")
 
-
-
         layout.addWidget(self.table, stretch=10)
-
-
-
         self.setLayout(layout)
-
-
 
     def eventFilter(self, a0: 'QObject', a1: 'QEvent') -> bool:
         if a1.type() == QtCore.QEvent.MouseMove:

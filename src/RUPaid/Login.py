@@ -18,8 +18,8 @@ class LoginPage(QWidget):
         super().__init__(parent=None)
         self.employee_controller = None
         self.employer_controller = None
-        database_connection = DBConnection()
-        self.cursor = database_connection.get_cursor()
+        self.database_connection = DBConnection()
+        self.cursor = self.database_connection.get_cursor()
         self.username_input = None
         self.password_input = None
         self.login_button = None
@@ -65,7 +65,7 @@ class LoginPage(QWidget):
     def login(self):
         username = self.username_input.text()
         password = self.password_input.text()
-        hashed_password = Hashing.hash_password(password)
+        hashed_password = Hashing(database_connection=self.database_connection).hash_password(password)
 
         try:
             self.cursor.execute("SELECT * FROM users WHERE user_name = ? AND password = ?", (username, hashed_password))
@@ -79,10 +79,10 @@ class LoginPage(QWidget):
             QMessageBox.information(self, "Login successful", "Login successful")
             if results[7].lower() == "employee":
                 self.close()
-                self.employee_controller = EmployeeController(results)
+                self.employee_controller = EmployeeController(results, self.database_connection)
             elif results[7].lower() == "employer":
                 self.close()
-                self.employer_controller = EmployerController(results)
+                self.employer_controller = EmployerController(results, self.database_connection)
 
         else:
             print("Login failed")
