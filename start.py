@@ -10,6 +10,7 @@ if __name__ == '__main__':
         # Print PYTHONPATH
         os.system(f"echo %PYTHONPATH%")
         print(f"PYTHONPATH: {os.environ.get('PYTHONPATH')}")
+        print((f"SET PYTHONPATH=%PYTHONPATH%;{os.getcwd()}"))
         os.chdir("src")
         os.system(f"python RUPaid{os.sep}runner.py")
         os.chdir("..")
