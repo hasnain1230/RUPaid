@@ -4,8 +4,9 @@ from src.RUPaid.Crypt import Hashing
 from src.employee.EmployeeView import EmployeeView
 from src.RUPaid.DatabaseConnection import DBConnection
 
+
 class EmployeeController:
-    def __init__(self, employee_data):
+    def __init__(self, employee_data, database_connection: DBConnection):
         self.employee_data = employee_data
         self.company_name = employee_data[0]
         self.company_name_id = employee_data[1]
@@ -20,10 +21,10 @@ class EmployeeController:
         self.email = employee_data[10]
         self.account_number = "*" * (len(employee_data[11]) - 4) + employee_data[11][-4:]
         self.routing_number = employee_data[12]
-        self.db_connection = DBConnection()
+        self.db_connection = database_connection
         self.login_page = None
 
-        self.ui = EmployeeView(self)
+        self.ui = EmployeeView(self, database_connection)
         self.ui.show()
 
     def save_information(self, grid_layout: QtWidgets.QGridLayout):

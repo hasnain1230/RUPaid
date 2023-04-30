@@ -10,7 +10,7 @@ from src.employee.ChangePasswordWindow import ChangePasswordWindow
 
 
 class EmployeeView(QWidget):
-    def __init__(self, controller):
+    def __init__(self, controller, database_connection: DBConnection):
         super(EmployeeView, self).__init__()
         self.change_password_dialog = None
         self.change_password_button = None
@@ -18,7 +18,7 @@ class EmployeeView(QWidget):
         self.grid_layout = None
         self.title = None
         self.clock_in_button = None
-        self.dbConnection = DBConnection()
+        self.dbConnection = database_connection
         self.controller = controller
         self.init_ui()
         self.timer = QtCore.QTimer()
