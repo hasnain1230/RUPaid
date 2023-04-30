@@ -3,7 +3,7 @@ from PyQt5 import QtWidgets
 from src.RUPaid.Crypt import Hashing
 from src.employee.EmployeeView import EmployeeView
 from src.RUPaid.DatabaseConnection import DBConnection
-from src.messaging.messagingView import MessagingView
+from src.messaging.MessagingView import MessagingView
 
 from PyQt5.QtWidgets import QApplication
 import sys
@@ -73,15 +73,14 @@ class MessagingController:
         if(self.db_connection.insert_message(self.user_id, recipient_id, len(message), message)):
             # messaging failed to insert
             self.populate_messages_list(recipient_id)
-        else:
-            # messaging succeeded, dialogue
-            pass
-
+        
+'''
 app = QApplication(sys.argv)
 t = MessagingController(8)
 t.ui.show()
 sys.exit(app.exec_())
-        
+'''
+
 
 
 
