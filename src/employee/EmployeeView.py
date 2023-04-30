@@ -1,16 +1,19 @@
-from PyQt5 import QtWidgets, QtGui, QtCore
-from PyQt5.QtGui import QFontDatabase
-from PyQt5.QtWidgets import QWidget, QLabel, QMessageBox
-import PyQt5.QtCore
-from datetime import datetime
-from datetime import timedelta
+from PyQt5 import QtGui
 
-from src.DatabaseConnection import DBConnection
+from PyQt5 import QtWidgets, QtCore
+from PyQt5.QtGui import QFontDatabase
+from PyQt5.QtWidgets import QWidget, QMessageBox
+
+
+from src.RUPaid.DatabaseConnection import DBConnection
+from src.employee.ChangePasswordWindow import ChangePasswordWindow
 
 
 class EmployeeView(QWidget):
     def __init__(self, controller):
         super(EmployeeView, self).__init__()
+        self.change_password_dialog = None
+        self.change_password_button = None
         self.edit_button = None
         self.grid_layout = None
         self.title = None
@@ -19,12 +22,21 @@ class EmployeeView(QWidget):
         self.controller = controller
         self.init_ui()
         self.timer = QtCore.QTimer()
+
+        self.timer.timeout.connect(lambda: self.controller.logout(timer=self.timer))
+        self.timer.start(300000)
+        self.installEventFilter(self)
+        self.setWindowTitle("RUPaid - Employee")
+
+    def init_ui(self):
+        self.setFixedSize(1100, 440)
         self.timer.timeout.connect(self.controller.logout)
         self.timer.start(300000)
         self.installEventFilter(self)
 
     def init_ui(self):
         self.setFixedWidth(1000)
+
 
         layout = QtWidgets.QVBoxLayout()
         self.setWindowTitle("RUPaid - Employee")
@@ -50,19 +62,26 @@ class EmployeeView(QWidget):
         self.clock_in_button = QtWidgets.QPushButton("Clock In")
         self.clock_in_button.clicked.connect(self.clock_in)
         title_layout.addWidget(self.clock_in_button, 0, 1, alignment=QtCore.Qt.AlignRight)
+
         # Add Edit Button
         self.edit_button = QtWidgets.QPushButton("Edit Information")
         self.edit_button.clicked.connect(self.edit_information)
         title_layout.addWidget(self.edit_button, 0, 2, alignment=QtCore.Qt.AlignRight)
+
+        # Add Change Password Button
+        self.change_password_button = QtWidgets.QPushButton("Change Password")
+        self.change_password_button.clicked.connect(self.change_password)
+        title_layout.addWidget(self.change_password_button, 0, 3, alignment=QtCore.Qt.AlignRight)
+
         # Add logout button
         logout_button = QtWidgets.QPushButton("Logout")
-        logout_button.clicked.connect(self.controller.logout)
-        title_layout.addWidget(logout_button, 0, 3, alignment=QtCore.Qt.AlignRight)
+
+        logout_button.clicked.connect(lambda: self.controller.logout(timer=self.timer))
+
+        title_layout.addWidget(logout_button, 0, 4, alignment=QtCore.Qt.AlignRight)
 
         # Make the two buttons right next to each other
         title_layout.setColumnStretch(0, 1)
-        title_layout.setColumnStretch(1, 0)
-        title_layout.setColumnStretch(2, 0)
 
         layout.addLayout(title_layout, stretch=1)
 
@@ -119,6 +138,7 @@ class EmployeeView(QWidget):
                 value = value_label.text()
                 value_edit = QtWidgets.QLineEdit()
                 value_edit.setText(value)
+                value_edit.returnPressed.connect(lambda: (self.controller.save_information(self.grid_layout), self.post_save()))
                 self.grid_layout.replaceWidget(value_label, value_edit)
                 value_label.deleteLater()
 
@@ -135,6 +155,10 @@ class EmployeeView(QWidget):
 
             if isinstance(value_edit, QtWidgets.QLineEdit):
                 value = value_edit.text()
+
+                if row == 6:  # If row is bank account number, replace all but last 4 digits with asterisks
+                    value = "*" * (len(value) - 4) + value[-4:]
+
                 grid_label_font = QFontDatabase.systemFont(QFontDatabase.SystemFont.GeneralFont)
                 grid_label_font.setPointSize(14)
 
@@ -155,8 +179,8 @@ class EmployeeView(QWidget):
         time_checked_in = self.controller.get_time_checked_in(
             user_id=self.grid_layout.itemAtPosition(0, 1).widget().text())
 
-        time_checked_in_label = time_checked_in + timedelta(minutes=7.5)
-        time_checked_in_label = time_checked_in_label - timedelta(minutes=time_checked_in_label.minute % 15, seconds=time_checked_in_label.second, microseconds=time_checked_in_label.microsecond)
+        # time_checked_in_label = time_checked_in + timedelta(minutes=7.5)
+        # time_checked_in_label = time_checked_in_label - timedelta(minutes=time_checked_in_label.minute % 15, seconds=time_checked_in_label.second, microseconds=time_checked_in_label.microsecond)
 
         # As 24 hour time
         time_checked_in = time_checked_in.strftime("%H:%M")
@@ -179,6 +203,10 @@ class EmployeeView(QWidget):
         self.clock_in_button.clicked.disconnect()
         self.clock_in_button.clicked.connect(self.clock_in)
 
+    def change_password(self):
+        self.change_password_dialog = ChangePasswordWindow(self.controller)
+        self.change_password_dialog.show()
+
     def eventFilter(self, a0: 'QObject', a1: 'QEvent') -> bool:
         if a1.type() == QtCore.QEvent.MouseMove:
             print("Mouse moved")
@@ -187,3 +215,8 @@ class EmployeeView(QWidget):
             print(self.timer.remainingTime())
 
         return super().eventFilter(a0, a1)
+
+
+    def resizeEvent(self, a0: QtGui.QResizeEvent) -> None:
+        print(f"Window resized to {self.width()}x{self.height()}")
+

@@ -1,7 +1,8 @@
 from PyQt5 import QtWidgets
-from EmployeeView import EmployeeView
-from DatabaseConnection import DBConnection
 
+from src.RUPaid.Crypt import Hashing
+from src.employee.EmployeeView import EmployeeView
+from src.RUPaid.DatabaseConnection import DBConnection
 
 class EmployeeController:
     def __init__(self, employee_data):
@@ -17,9 +18,10 @@ class EmployeeController:
         self.age = employee_data[8]
         self.occupation = employee_data[9]
         self.email = employee_data[10]
-        self.account_number = employee_data[11]
+        self.account_number = "*" * (len(employee_data[11]) - 4) + employee_data[11][-4:]
         self.routing_number = employee_data[12]
         self.db_connection = DBConnection()
+        self.login_page = None
 
         self.ui = EmployeeView(self)
         self.ui.show()
@@ -50,15 +52,44 @@ class EmployeeController:
         cursor.execute(query, (self.user_id,))
         self.db_connection.commit_transaction()
 
+    def clock_out(self):
+        query = "UPDATE clock_in_out SET clock_out_time = NOW(), time_diff = TIMEDIFF(clock_out_time, clock_in_time) WHERE user_id = ? AND clock_out_time IS NULL"
+        cursor = self.db_connection.get_cursor()
+        cursor.execute(query, (self.user_id,))
+        self.db_connection.commit_transaction()
+
     def get_time_checked_in(self, user_id):
         query = "SELECT clock_in_time FROM clock_in_out WHERE user_id = ? ORDER BY clock_in_time DESC LIMIT 1"
         cursor = self.db_connection.get_cursor()
         cursor.execute(query, (user_id,))
         return cursor.fetchone()[0]
 
-    def logout(self):
-        self.ui.close()
-        from Login import LoginPage
-        # Load the login page
+    def get_time_checked_out(self, user_id):
+        query = "SELECT clock_out_time FROM clock_in_out WHERE user_id = ? ORDER BY clock_out_time DESC LIMIT 1"
+        cursor = self.db_connection.get_cursor()
+        cursor.execute(query, (user_id,))
+        return cursor.fetchone()[0]
+
+    def check_password(self, password):
+        query = "SELECT password FROM users WHERE user_id = ?"
+        cursor = self.db_connection.get_cursor()
+        cursor.execute(query, (self.user_id,))
+        return cursor.fetchone()[0] == Hashing.hash_password(password)
+
+    def update_password(self, password):
+        query = "UPDATE users SET password = ? WHERE user_id = ?"
+        cursor = self.db_connection.get_cursor()
+        cursor.execute(query, (Hashing.hash_password(password), self.user_id))
+        self.db_connection.commit_transaction()
+
+    def logout(self, timer=None):
+        if timer is not None:
+            timer.stop()
+
+        for window in QtWidgets.QApplication.topLevelWidgets():
+            if isinstance(window, QtWidgets.QWidget):
+                window.close()
+
+        from src.RUPaid.Login import LoginPage
         self.login_page = LoginPage()
         self.login_page.show()
