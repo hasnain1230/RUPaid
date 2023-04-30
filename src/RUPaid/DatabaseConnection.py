@@ -8,11 +8,10 @@ class DBConnection(QWidget):
     def __init__(self):
         super().__init__()
 
-        host_names = ['192.168.1.116', 'lucidityarch.com']
+        host_names = ['lucidityarch.com', '192.168.1.116']
 
         self.db = None
         self.cursor = None
-
 
         for name in host_names:
             print(name)
@@ -30,7 +29,7 @@ class DBConnection(QWidget):
                 print(f"Error connecting to MariaDB Platform: {e}. Trying next host...")
                 continue
 
-        if self.db is None:
+        if self.cursor is None:
             QMessageBox.critical(self, "Connection Error", "Error connecting to database. Please try again later.",
                                  QMessageBox.Ok)
             sys.exit(115)
