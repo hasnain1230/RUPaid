@@ -1,7 +1,5 @@
-import sys
-
 from PyQt5 import QtWidgets, QtCore
-from PyQt5.QtWidgets import QApplication, QWidget, QVBoxLayout, QLabel, QTableWidget, QTableWidgetItem, \
+from PyQt5.QtWidgets import QWidget, QTableWidget, \
     QAbstractItemView
 from PyQt5.QtGui import QFontDatabase
 
