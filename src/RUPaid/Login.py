@@ -1,36 +1,23 @@
-import sys
-
-<<<<<<< Updated upstream:src/main.py
 from PyQt5.QtCore import Qt
-from PyQt5.QtGui import QPixmap
 from PyQt5.QtWidgets import *
-from constants import constants
-import mariadb
-from cryptography.hazmat.backends import default_backend
-from cryptography.hazmat.primitives import hashes
+from src.constants import constants
 from ScaledPixmapLabel import ScaledPixmapLabel
-=======
+
 from src.employer.EmployerController import EmployerController
 
->>>>>>> Stashed changes:src/RUPaid/Login.py
+from DatabaseConnection import DBConnection
+from src.employee.EmployeeController import EmployeeController
+from src.RUPaid.Crypt import Hashing
+import mariadb
+
 
 class LoginPage(QWidget):
     def __init__(self):
-        super().__init__()
-
-        try:
-            self.connection = mariadb.connect(
-                user='lucidity',
-                password='lucidity',
-                host='lucidityarch.com',
-                port=3306,
-                database='RUPaid'
-            )
-        except mariadb.Error as e:
-            print(f"Error connecting to MariaDB Platform: {e}")
-            QMessageBox.critical(self, "Connection Error", "Error connecting to database. Please try again later.", QMessageBox.Ok)
-            sys.exit(115)
-
+        super().__init__(parent=None)
+        self.employee_controller = None
+        self.employer_controller = None
+        database_connection = DBConnection()
+        self.cursor = database_connection.get_cursor()
         self.username_input = None
         self.password_input = None
         self.login_button = None
@@ -73,28 +60,28 @@ class LoginPage(QWidget):
 
         self.setLayout(layout)
 
-    def hash_password(self, password):
-        digest = hashes.Hash(hashes.SHA3_512(), backend=default_backend())
-        digest.update(password.encode())
-        return digest.finalize().hex()
-
     def login(self):
         username = self.username_input.text()
         password = self.password_input.text()
-        hashed_password = self.hash_password(password)
-
-        cursor = self.connection.cursor()
+        hashed_password = Hashing.hash_password(password)
 
         try:
-            cursor.execute("SELECT * FROM users WHERE user_name = ? AND password = ?", (username, hashed_password))
+            self.cursor.execute("SELECT * FROM users WHERE user_name = ? AND password = ?", (username, hashed_password))
+            results = self.cursor.fetchone()
         except mariadb.Connection.Error as e:
             QMessageBox.warning(self, "Error", f"Error connecting to database: {e}")
             return
 
-        if cursor.fetchone() is not None:
+        if results is not None:
             print("Login successful")
             QMessageBox.information(self, "Login successful", "Login successful")
-<<<<<<< Updated upstream:src/main.py
+            if results[7].lower() == "employee":
+                self.close()
+                self.employee_controller = EmployeeController(results)
+            elif results[7].lower() == "employer":
+                self.close()
+                self.employer_controller = EmployerController(results)
+
         else:
             print("Login failed")
             QMessageBox.warning(self, "Login failed!", "Login failed! Either your username or password is incorrect.")
@@ -106,26 +93,3 @@ class LoginPage(QWidget):
 
         # Call the parent class's resizeEvent method
         super().resizeEvent(event)
-
-if __name__ == "__main__":
-    app = QApplication(sys.argv)
-    # What arguments can be passed to QApplication?
-    # https://doc.qt.io/qt-5/qapplication.html#QApplication
-    login_page = LoginPage()
-    # Set the size of the window
-
-    login_page.show()
-    sys.exit(app.exec_())
-=======
-
-            if results[7].lower() == "employee":
-                self.close()
-                self.employee_controller = EmployeeController(results)
-            elif results[7].lower() == "employer":
-                self.close()
-                self.employer_controller = EmployerController(results)
-
-        else:
-            print("Login failed")
-            QMessageBox.warning(self, "Login failed!", "Login failed! Either your username or password is incorrect.")
->>>>>>> Stashed changes:src/RUPaid/Login.py

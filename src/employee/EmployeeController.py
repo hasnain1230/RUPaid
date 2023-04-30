@@ -90,6 +90,9 @@ class EmployeeController:
         for window in QtWidgets.QApplication.topLevelWidgets():
             if isinstance(window, QtWidgets.QWidget):
                 window.close()
+
+    def logout(self):
+        self.ui.close()
         from src.RUPaid.Login import LoginPage
         self.login_page = LoginPage()
         self.login_page.show()

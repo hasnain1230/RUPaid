@@ -1,4 +1,6 @@
-from PyQt5 import QtWidgets, QtCore, QtGui
+from PyQt5 import QtGui
+
+from PyQt5 import QtWidgets, QtCore
 from PyQt5.QtGui import QFontDatabase
 from PyQt5.QtWidgets import QWidget, QMessageBox
 
@@ -20,6 +22,7 @@ class EmployeeView(QWidget):
         self.controller = controller
         self.init_ui()
         self.timer = QtCore.QTimer()
+
         self.timer.timeout.connect(lambda: self.controller.logout(timer=self.timer))
         self.timer.start(300000)
         self.installEventFilter(self)
@@ -27,6 +30,13 @@ class EmployeeView(QWidget):
 
     def init_ui(self):
         self.setFixedSize(1100, 440)
+        self.timer.timeout.connect(self.controller.logout)
+        self.timer.start(300000)
+        self.installEventFilter(self)
+
+    def init_ui(self):
+        self.setFixedWidth(1000)
+
 
         layout = QtWidgets.QVBoxLayout()
         self.setWindowTitle("RUPaid - Employee")
@@ -65,7 +75,9 @@ class EmployeeView(QWidget):
 
         # Add logout button
         logout_button = QtWidgets.QPushButton("Logout")
+
         logout_button.clicked.connect(lambda: self.controller.logout(timer=self.timer))
+
         title_layout.addWidget(logout_button, 0, 4, alignment=QtCore.Qt.AlignRight)
 
         # Make the two buttons right next to each other
@@ -198,12 +210,13 @@ class EmployeeView(QWidget):
     def eventFilter(self, a0: 'QObject', a1: 'QEvent') -> bool:
         if a1.type() == QtCore.QEvent.MouseMove:
             print("Mouse moved")
-            # Restart timer
             self.timer.stop()
             self.timer.start(300000)
             print(self.timer.remainingTime())
 
         return super().eventFilter(a0, a1)
 
+
     def resizeEvent(self, a0: QtGui.QResizeEvent) -> None:
         print(f"Window resized to {self.width()}x{self.height()}")
+

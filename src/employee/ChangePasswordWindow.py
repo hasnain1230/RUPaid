@@ -52,6 +52,9 @@ class ChangePasswordWindow(QMainWindow):
         elif not self.employee_controller.check_password(current_password):
             QMessageBox.about(self, "Error",
                               "Current password does not match your previous password. Please speak to your manager to reset your password.")
+            QMessageBox.about(self, "Error",
+                              "Current password does not match your previous password. Please speak to your manager to reset your password.")
+
             self.current_password_input.clear()
             self.current_password_input.setFocus()
             return
