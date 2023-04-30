@@ -82,6 +82,12 @@ class EmployeeController:
         cursor.execute(query, (Hashing.hash_password(password), self.user_id))
         self.db_connection.commit_transaction()
 
+    def get_current_clock_in_status(self):
+        query = "SELECT clock_out_time FROM clock_in_out WHERE user_id = ? AND clock_out_time IS NULL"
+        cursor = self.db_connection.get_cursor()
+        cursor.execute(query, (self.user_id,))
+        return cursor.fetchone() is not None  # Returns true if the user is clocked in
+
     def logout(self, timer=None):
         if timer is not None:
             timer.stop()

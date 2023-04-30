@@ -71,15 +71,8 @@ class EmployerView(QWidget):
         self.table.setShowGrid(False)
         self.table.setStyleSheet("QTableWidget::item { padding: 10px; }")
 
-
-
         layout.addWidget(self.table, stretch=10)
-
-
-
         self.setLayout(layout)
-
-
 
     def eventFilter(self, a0: 'QObject', a1: 'QEvent') -> bool:
         if a1.type() == QtCore.QEvent.MouseMove:
