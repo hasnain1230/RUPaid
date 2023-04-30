@@ -4,7 +4,6 @@ from src.RUPaid.Crypt import Hashing
 from src.employee.EmployeeView import EmployeeView
 from src.RUPaid.DatabaseConnection import DBConnection
 
-
 class EmployeeController:
     def __init__(self, employee_data):
         self.employee_data = employee_data
