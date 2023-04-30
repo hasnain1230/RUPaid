@@ -10,10 +10,12 @@ if __name__ == '__main__':
         # Print PYTHONPATH
         os.system(f"echo %PYTHONPATH%")
         print(f"PYTHONPATH: {os.environ.get('PYTHONPATH')}")
-        os.system(f"cd src")
+        os.chdir("src")
         os.system(f"python RUPaid{os.sep}runner.py")
-        os.system(f"cd ..")
+        os.chdir("..")
     else:
         os.system(f"export PYTHONPATH=$PYTHONPATH:{os.getcwd()}")
         print(f"PYTHONPATH: {os.environ.get('PYTHONPATH')}")
-        os.system(f"cd src ; python3 RUPaid{os.sep}runner.py ; cd ..")
+        os.chdir("src")
+        os.system(f"python RUPaid{os.sep}runner.py")
+        os.chdir("..")
