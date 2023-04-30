@@ -37,7 +37,6 @@ class EmployeeView(QWidget):
     def init_ui(self):
         self.setFixedWidth(1000)
 
-
         layout = QtWidgets.QVBoxLayout()
         self.setWindowTitle("RUPaid - Employee")
 
@@ -59,8 +58,17 @@ class EmployeeView(QWidget):
         # Add the title to the title layout
         title_layout.addWidget(self.title, 0, 0, alignment=QtCore.Qt.AlignLeft)
 
-        self.clock_in_button = QtWidgets.QPushButton("Clock In")
-        self.clock_in_button.clicked.connect(self.clock_in)
+        # Get current clock in status
+
+        clock_in_status = self.controller.get_current_clock_in_status()
+
+        if clock_in_status:
+            self.clock_in_button = QtWidgets.QPushButton("Clock Out")
+            self.clock_in_button.clicked.connect(self.clock_out)
+        else:
+            self.clock_in_button = QtWidgets.QPushButton("Clock In")
+            self.clock_in_button.clicked.connect(self.clock_in)
+
         title_layout.addWidget(self.clock_in_button, 0, 1, alignment=QtCore.Qt.AlignRight)
 
         # Add Edit Button
@@ -215,7 +223,6 @@ class EmployeeView(QWidget):
             print(self.timer.remainingTime())
 
         return super().eventFilter(a0, a1)
-
 
     def resizeEvent(self, a0: QtGui.QResizeEvent) -> None:
         print(f"Window resized to {self.width()}x{self.height()}")
