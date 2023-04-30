@@ -1,3 +1,6 @@
+import os
+import sys
+
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QPixmap
 from PyQt5.QtWidgets import QLabel
@@ -11,5 +14,8 @@ class ScaledPixmapLabel(QLabel):
     def resizeEvent(self, event):
         scaled_pixmap = self.original_pixmap.scaled(self.size(), Qt.KeepAspectRatio, Qt.SmoothTransformation)
         self.setPixmap(scaled_pixmap)
-        print(f'Pixmap size: {self.pixmap().size()}')
+        # Print the current path of current python file
+        pythonpath = os.environ.get('PYTHONPATH')
+        print("PYTHONPATH:", pythonpath)
+        print(f'Pixmap size: {self.pixmap().size()} {self.pixmap_path}')
         super().resizeEvent(event)

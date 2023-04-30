@@ -1,5 +1,6 @@
 import sys
 
+<<<<<<< Updated upstream:src/main.py
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QPixmap
 from PyQt5.QtWidgets import *
@@ -8,6 +9,10 @@ import mariadb
 from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives import hashes
 from ScaledPixmapLabel import ScaledPixmapLabel
+=======
+from src.employer.EmployerController import EmployerController
+
+>>>>>>> Stashed changes:src/RUPaid/Login.py
 
 class LoginPage(QWidget):
     def __init__(self):
@@ -89,6 +94,7 @@ class LoginPage(QWidget):
         if cursor.fetchone() is not None:
             print("Login successful")
             QMessageBox.information(self, "Login successful", "Login successful")
+<<<<<<< Updated upstream:src/main.py
         else:
             print("Login failed")
             QMessageBox.warning(self, "Login failed!", "Login failed! Either your username or password is incorrect.")
@@ -110,3 +116,16 @@ if __name__ == "__main__":
 
     login_page.show()
     sys.exit(app.exec_())
+=======
+
+            if results[7].lower() == "employee":
+                self.close()
+                self.employee_controller = EmployeeController(results)
+            elif results[7].lower() == "employer":
+                self.close()
+                self.employer_controller = EmployerController(results)
+
+        else:
+            print("Login failed")
+            QMessageBox.warning(self, "Login failed!", "Login failed! Either your username or password is incorrect.")
+>>>>>>> Stashed changes:src/RUPaid/Login.py
