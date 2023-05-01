@@ -6,6 +6,7 @@ from PyQt5 import QtCore, QtWidgets
 from src.RUPaid.DatabaseConnection import DBConnection
 from src.RUPaid.Crypt import Hashing
 from src.employer.EmployerView import EmployerView
+import copy
 
 
 class EmployerController:
@@ -36,7 +37,9 @@ class EmployerController:
                 "bankAccountNumber, bankRoutingNumber FROM users WHERE company_id = ?"
         cursor = self.db_connection.get_cursor()
         cursor.execute(query, (self.company_name_id,))
-        # Bank account number should be *'d out
+
+        # Reset the cursor
+        self.db_connection.commit_transaction()
 
         return cursor.fetchall()
 
@@ -53,13 +56,38 @@ class EmployerController:
 
         cursor = self.db_connection.get_cursor()
         cursor.execute(query)
-        return cursor.fetchone()[0]
+        user_id = cursor.fetchone()[0]
+        return user_id
 
-    def update_password(self, password):
+    def update_password(self, password, user_id):
         query = "UPDATE users SET password = ? WHERE user_id = ?"
         cursor = self.db_connection.get_cursor()
-        cursor.execute(query, (Hashing.hash_password(password), self.user_id))
+        cursor.execute(query, (Hashing.hash_password(password), user_id))
         self.db_connection.commit_transaction()
+
+    def check_for_duplicate_username(self, username):
+        query = "SELECT user_name FROM users WHERE user_name = ?"
+        cursor = self.db_connection.get_cursor()
+        cursor.execute(query, (username,))
+        return cursor.fetchone() is not None
+
+    def edit_employee(self, user_id, username, first_name, last_name, role, age, occupation, hourly_pay, email, bank_account, bank_routing_number):
+        self.db_connection.commit_transaction()
+
+        # Check if bank account number has *'s in it
+        if "*" in bank_account:
+            # Get bank account of user_id
+            query = "SELECT bankAccountNumber FROM users WHERE user_id = ?"
+            cursor = self.db_connection.get_cursor()
+            cursor.execute(query, (user_id,))
+            bank_account = cursor.fetchone()[0]
+
+        query = "UPDATE users SET user_name = ?, first_name = ?, last_name = ?, role = ?, age = ?, occupation = ?, hourly_pay = ?, email = ?, bankAccountNumber = ?, bankRoutingNumber = ? WHERE user_id = ?"
+        cursor = self.db_connection.get_cursor()
+        cursor.execute(query, (username, first_name, last_name, role, age, occupation, hourly_pay, email, bank_account, bank_routing_number, user_id))
+        self.db_connection.commit_transaction()
+        self.ui.populate_table()
+
 
     def add_user(self, username, password, first_name, last_name, role, age, occupation, email, bank_account,
                  bank_routing_number, hourly_rate):

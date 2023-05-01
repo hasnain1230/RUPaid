@@ -1,16 +1,20 @@
 from PyQt5 import QtWidgets, QtCore
-from PyQt5.QtWidgets import QWidget, QTableWidget, \
-    QAbstractItemView
-from PyQt5.QtGui import QFontDatabase
+from PyQt5.QtCore import QRegExp
+from PyQt5.QtWidgets import *
+from PyQt5.QtGui import QFontDatabase, QRegExpValidator
+
 from src.employer.AddUserWindow import AddUser
-from src.RUPaid.ChangePasswordWindow import ChangePasswordWindow
+from src.employer.ResetPassword import ResetPassword
+from src.employer.EditWindow import EditDialog
 
 SELECTED_ROW_CONSTANT = 10
 
 
 class EmployerView(QWidget):
     def __init__(self, controller):
-        super().__init__()
+        super().__init__(parent=None)
+        self.edit_dialog = None
+        self.reset_password = None
         self.setMinimumSize(1500, 440)
         self.controller = controller
         self.setWindowTitle("RUPaid - Employer")
@@ -30,7 +34,7 @@ class EmployerView(QWidget):
         title_layout = QtWidgets.QGridLayout()
 
         # Create a title for the window
-        self.title = QtWidgets.QLabel(self)
+        self.title = QtWidgets.QLabel()
         font = QFontDatabase.systemFont(QFontDatabase.TitleFont)  # Use QFontDatabase to find a suitable font
         font.setPointSize(24)
         font.setBold(True)
@@ -78,15 +82,17 @@ class EmployerView(QWidget):
         self.table.setHorizontalHeaderLabels([label[0] for label in self.table_labels])
         self.table.doubleClicked.connect(lambda: self.edit_user())
         self.table.setSelectionBehavior(QtWidgets.QTableWidget.SelectionBehavior.SelectRows)
+        self.table.setEditTriggers(QtWidgets.QTableWidget.NoEditTriggers)
         self.table.setAlternatingRowColors(True)
         self.table.setSortingEnabled(False)
         self.table.horizontalHeader().setStretchLastSection(True)
         self.table.horizontalHeader().setSectionResizeMode(QtWidgets.QHeaderView.Stretch)
         self.table.verticalHeader().setVisible(False)
         self.table.setShowGrid(False)
+        self.table.itemDoubleClicked.connect(lambda: self.edit_user())
+        self.table.itemClicked.connect(lambda: self.reset_timer())
 
         # Install event listener when field is edited
-        self.table.itemChanged.connect(self.item_changed)
         self.table.itemSelectionChanged.connect(self.prepare_buttons)
         # Allow columns to be resized
         self.table.horizontalHeader().setSectionResizeMode(QtWidgets.QHeaderView.Interactive)
@@ -99,9 +105,9 @@ class EmployerView(QWidget):
         button_layout.addStretch(1)
 
         # Change Password
-        self.change_password_button = QtWidgets.QPushButton("Change Password")
-        self.change_password_button.clicked.connect(lambda: self.change_password())
+        self.change_password_button = QtWidgets.QPushButton("Reset Password")
         self.change_password_button.setDisabled(True)
+        self.change_password_button.clicked.connect(self.change_password)
         button_layout.addWidget(self.change_password_button, alignment=QtCore.Qt.AlignRight)
 
         # Refresh Button
@@ -114,6 +120,12 @@ class EmployerView(QWidget):
         # Add user function and populate table again
         add_user_button.clicked.connect(lambda: self.add_user())
         button_layout.addWidget(add_user_button, alignment=QtCore.Qt.AlignRight)
+
+        # Edit User
+        self.edit_user_button = QtWidgets.QPushButton("Edit User")
+        self.edit_user_button.setDisabled(True)
+        self.edit_user_button.clicked.connect(lambda: self.edit_user())
+        button_layout.addWidget(self.edit_user_button, alignment=QtCore.Qt.AlignRight)
 
         # Remove user button
         self.remove_user_button = QtWidgets.QPushButton("Remove User")
@@ -137,34 +149,21 @@ class EmployerView(QWidget):
         new_user = AddUser(self.controller.get_next_user_id, self.controller, self.populate_table)
         new_user.show()
 
-    def item_changed(self, item):
-        # Get the row and column of the item that was changed
-        row = item.row()
-        column = item.column()
-
-        # Find the column name from the table labels
-        column_name = self.table_labels[column][1]
-
-        # Get the value of the item
-        value = item.text()
-
-        # Get the user id of the user that was changed
-        user_id = self.table.item(row, 0).text()
-
-        # Update the user in the database
-        self.controller.update_user(user_id, column_name, value)
-
     def change_password(self):
-        change_password = ChangePasswordWindow(self.controller)
-        change_password.show()
+        # Get the user id of the selected user
+        user_id = self.table.item(self.table.currentRow(), 0).text()
+        self.reset_password = ResetPassword(user_id, employer_controller=self.controller)
+        self.reset_password.show()
 
     def prepare_buttons(self):
         selected_row = self.table.selectedIndexes()
 
         if len(selected_row) == SELECTED_ROW_CONSTANT:
             self.change_password_button.setDisabled(False)
+            self.edit_user_button.setDisabled(False)
         else:
             self.change_password_button.setDisabled(True)
+            self.edit_user_button.setDisabled(True)
 
         if len(selected_row) != 0 and len(selected_row) % SELECTED_ROW_CONSTANT == 0:
             self.remove_user_button.setDisabled(False)
@@ -172,19 +171,23 @@ class EmployerView(QWidget):
             self.remove_user_button.setDisabled(True)
 
     def edit_user(self):
-        pass
+        # Get selected row
+        selected_row = self.table.selectedIndexes()
+        # Get user id of selected row
+        selected_row = self.table.item(selected_row[0].row(), 0).text()
+
+        self.edit_dialog = EditDialog(table=self.table, controller=self.controller)
+        self.edit_dialog.show()
 
     def populate_table(self):
         users = self.controller.get_all_users()
-        # * out all but last 4 digits of account number
 
         self.table.setRowCount(len(users))
 
         for i, user in enumerate(users):
-            # Make user be a list instead of a tuple
-            user = list(user)
-            user[9] = '*' * (len(user[9]) - 4) + user[9][-4:]
             for j, value in enumerate(user):
+                if j == 9:
+                    value = '*' * (len(value) - 4) + value[-4:]
                 self.table.setItem(i, j, QtWidgets.QTableWidgetItem(str(value)))
                 if j == 0:
                     self.table.item(i, j).setFlags(QtCore.Qt.ItemIsEnabled)
@@ -195,12 +198,22 @@ class EmployerView(QWidget):
         for i in range(0, len(selected_row), SELECTED_ROW_CONSTANT):
             if i % SELECTED_ROW_CONSTANT == 0:
                 user_id = self.table.item(selected_row[i].row(), 0).text()
+
+                if user_id == self.controller.user_id:
+                    QtWidgets.QMessageBox.warning(self, "Error", "You cannot remove yourself")
+                    continue
+
                 user_ids_to_remove.append(user_id)
 
         for user_id in user_ids_to_remove:
             self.controller.remove_user(user_id)
 
         self.populate_table()
+
+    def reset_timer(self):
+        self.timer.stop()
+        self.timer.start(300000)
+        print("Time Reset")
 
     def eventFilter(self, a0: 'QObject', a1: 'QEvent') -> bool:
         if a1.type() == QtCore.QEvent.MouseMove:
