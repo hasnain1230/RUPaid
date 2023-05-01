@@ -75,9 +75,8 @@ class EmployeeView(QWidget):
 
         # Add logout button
         logout_button = QtWidgets.QPushButton("Logout")
-
         logout_button.clicked.connect(lambda: self.controller.logout(timer=self.timer))
-
+        logout_button.setStyleSheet("background-color: red; color: white; border-radius: 5px; padding: 5px;")
         title_layout.addWidget(logout_button, 0, 4, alignment=QtCore.Qt.AlignRight)
 
         # Make the two buttons right next to each other

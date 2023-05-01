@@ -28,6 +28,7 @@ class EmployeeController:
 
     def save_information(self, grid_layout: QtWidgets.QGridLayout):
         # Get the new information from the grid layout
+
         new_information = {}
         for row in range(5, grid_layout.rowCount()):
             label = grid_layout.itemAtPosition(row, 0).widget()
@@ -35,6 +36,12 @@ class EmployeeController:
 
             if isinstance(label, QtWidgets.QLabel) and isinstance(value_edit, QtWidgets.QLineEdit):
                 new_information[label.text()] = value_edit.text()
+
+        # if bank account number has stars in it, then return
+        if "*" in new_information["Bank Account Number:"]:
+            # Notify user that their information was not saved
+            QtWidgets.QMessageBox.warning(self.ui, "Information Not Changed", "Bank Information was not changed. Please input a valid bank account number.")
+
 
         self.email = new_information["Email:"]
         self.account_number = new_information["Bank Account Number:"]
@@ -91,5 +98,5 @@ class EmployeeController:
                 window.close()
 
         from src.RUPaid.Login import LoginPage
-        self.login_page = LoginPage()
+        self.login_page = LoginPage(self.db_connection)
         self.login_page.show()
