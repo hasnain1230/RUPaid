@@ -104,16 +104,29 @@ class EmployerView(QWidget):
 
         button_layout.addStretch(1)
 
+
+
+        # Refresh Button
+        refresh_button = QtWidgets.QPushButton("Refresh")
+        refresh_button.clicked.connect(lambda: self.populate_table())
+        button_layout.addWidget(refresh_button, alignment=QtCore.Qt.AlignRight)
+
         # Change Password
         self.change_password_button = QtWidgets.QPushButton("Reset Password")
         self.change_password_button.setDisabled(True)
         self.change_password_button.clicked.connect(self.change_password)
         button_layout.addWidget(self.change_password_button, alignment=QtCore.Qt.AlignRight)
 
-        # Refresh Button
-        refresh_button = QtWidgets.QPushButton("Refresh")
-        refresh_button.clicked.connect(lambda: self.populate_table())
-        button_layout.addWidget(refresh_button, alignment=QtCore.Qt.AlignRight)
+        # View User Hours
+        self.view_hours_button = QtWidgets.QPushButton("View User Hours")
+        self.view_hours_button.setDisabled(True)
+        # self.view_hours_button.clicked.connect(self.view_hours)
+
+        # Pay User
+        self.pay_user_button = QtWidgets.QPushButton("Pay User")
+        self.pay_user_button.setDisabled(True)
+        # self.pay_user_button.clicked.connect(self.pay_user)
+        button_layout.addWidget(self.pay_user_button, alignment=QtCore.Qt.AlignRight)
 
         # Add user button
         add_user_button = QtWidgets.QPushButton("Add User")
@@ -161,9 +174,11 @@ class EmployerView(QWidget):
         if len(selected_row) == SELECTED_ROW_CONSTANT:
             self.change_password_button.setDisabled(False)
             self.edit_user_button.setDisabled(False)
+            self.pay_user_button.setDisabled(False)
         else:
             self.change_password_button.setDisabled(True)
             self.edit_user_button.setDisabled(True)
+            self.pay_user_button.setDisabled(True)
 
         if len(selected_row) != 0 and len(selected_row) % SELECTED_ROW_CONSTANT == 0:
             self.remove_user_button.setDisabled(False)
@@ -209,6 +224,12 @@ class EmployerView(QWidget):
             self.controller.remove_user(user_id)
 
         self.populate_table()
+
+    def pay_user(self):
+        selected_row = self.table.selectedIndexes()
+        user_id = self.table.item(selected_row[0].row(), 0).text()
+        self.pay_user_dialog = PayUser(user_id, self.controller)
+        self.pay_user_dialog.show()
 
     def reset_timer(self):
         self.timer.stop()

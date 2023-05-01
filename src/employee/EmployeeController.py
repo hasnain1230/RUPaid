@@ -106,5 +106,7 @@ class EmployeeController:
                 window.close()
 
         from src.RUPaid.Login import LoginPage
+
         self.login_page = LoginPage(self.db_connection)
         self.login_page.show()
+

@@ -2,6 +2,7 @@ import sys
 
 import mariadb
 from PyQt5.QtWidgets import QMessageBox, QWidget
+from datetime import datetime
 
 
 class DBConnection(QWidget):
@@ -38,6 +39,10 @@ class DBConnection(QWidget):
     def get_cursor(self):
         return self.cursor
 
+    def select_other_users_from_table(self, user_id):
+        self.cursor.execute(f'SELECT * FROM users where user_id != {user_id}')
+        return self.cursor
+    
     def select_names_from_table(self, table='users'):
         self.cursor.execute(f'SELECT firstName, lastName FROM {table}')
         return self.cursor
@@ -51,6 +56,29 @@ class DBConnection(QWidget):
         values = (first, last, email, urn, account, routing, id)
         self.cursor.execute(sql, values)
         self.db.commit()
-        
+
+    def get_employee_conversation(self, sender_id, recipient_id):
+        sql = f"SELECT * from messages where (sender_id = {sender_id} and recipient_id = {recipient_id}) or (sender_id = {recipient_id} and recipient_id = {sender_id})"
+        self.cursor.execute(sql)
+        return self.cursor
+    
+    def get_user_id_by_name(self, first, last):
+        sql = f"SELECT user_id from users where first_name = '{first}' and last_name = '{last}'"
+        self.cursor.execute(sql)
+        return self.cursor
+    
+    def insert_message(self, sender_id, recipient_id, message_length, message):
+        dateObject= datetime.now()
+        time = dateObject.strftime("%Y-%m-%d %H:%M:%S")
+        sql = f"INSERT into messages (sender_id, recipient_id, message_length, message, is_checked, date) VALUES ({sender_id}, {recipient_id}, {message_length}, '{message}', 0, '{time}')"
+
+        try:
+            self.cursor.execute(sql)
+            self.db.commit()
+        except Exception:
+            # POPUP HERE
+            print("Failed to send message")
+        return 1
+
     def commit_transaction(self):
         self.db.commit()
