@@ -14,11 +14,11 @@ import mariadb
 
 
 class LoginPage(QWidget):
-    def __init__(self):
+    def __init__(self, database_connection=None):
         super().__init__(parent=None)
         self.employee_controller = None
         self.employer_controller = None
-        self.database_connection = DBConnection()
+        self.database_connection = DBConnection() if database_connection is None else database_connection
         self.cursor = self.database_connection.get_cursor()
         self.username_input = None
         self.password_input = None
