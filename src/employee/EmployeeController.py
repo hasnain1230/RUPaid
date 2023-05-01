@@ -41,6 +41,7 @@ class EmployeeController:
         if "*" in new_information["Bank Account Number:"]:
             # Notify user that their information was not saved
             QtWidgets.QMessageBox.warning(self.ui, "Information Not Changed", "Bank Information was not changed. Please input a valid bank account number.")
+            return
 
 
         self.email = new_information["Email:"]
