@@ -1,3 +1,5 @@
+import os.path
+
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import *
 from src.constants import constants
@@ -16,7 +18,11 @@ class LoginPage(QWidget):
         super().__init__(parent=None)
         self.employee_controller = None
         self.employer_controller = None
+<<<<<<< HEAD
         self.database_connection = DBConnection() if database_connection is None else database_connection
+=======
+        self.database_connection = DBConnection()
+>>>>>>> start
         self.cursor = self.database_connection.get_cursor()
         self.username_input = None
         self.password_input = None
@@ -30,7 +36,7 @@ class LoginPage(QWidget):
 
         self.setFixedSize(513, 369)
 
-        RUPAID_logo = ScaledPixmapLabel("../assets/RUPaid.png")
+        RUPAID_logo = ScaledPixmapLabel(f"..{os.path.sep}assets{os.path.sep}RUPaid.png")
         RUPAID_logo.setMinimumSize(493, 185)
         RUPAID_logo.setAlignment(Qt.AlignCenter)
         layout.addWidget(RUPAID_logo, 0, 0)
@@ -63,7 +69,7 @@ class LoginPage(QWidget):
     def login(self):
         username = self.username_input.text()
         password = self.password_input.text()
-        hashed_password = Hashing.hash_password(password)
+        hashed_password = Hashing(database_connection=self.database_connection).hash_password(password)
 
         try:
             self.cursor.execute("SELECT * FROM users WHERE user_name = ? AND password = ?", (username, hashed_password))
@@ -77,10 +83,10 @@ class LoginPage(QWidget):
             QMessageBox.information(self, "Login successful", "Login successful")
             if results[7].lower() == "employee":
                 self.close()
-                self.employee_controller = EmployeeController(results)
+                self.employee_controller = EmployeeController(results, self.database_connection)
             elif results[7].lower() == "employer":
                 self.close()
-                self.employer_controller = EmployerController(results)
+                self.employer_controller = EmployerController(results, self.database_connection)
 
         else:
             print("Login failed")

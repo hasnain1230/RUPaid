@@ -1,7 +1,5 @@
-import sys
-
 from PyQt5 import QtWidgets, QtCore
-from PyQt5.QtWidgets import QApplication, QWidget, QVBoxLayout, QLabel, QTableWidget, QTableWidgetItem, \
+from PyQt5.QtWidgets import QWidget, QTableWidget, \
     QAbstractItemView
 from PyQt5.QtGui import QFontDatabase
 from src.employer.AddUserWindow import AddUser
@@ -87,7 +85,6 @@ class EmployerView(QWidget):
         self.table.setShowGrid(False)
         # Do not allow account number or routing number to be sorted, but only allow the other columns to be sorted
         # Get the column of account number
-        account_number_column = table_labels.index("Account Number")
 
         # Install event listener when field is edited
         self.table.itemChanged.connect(self.item_changed)
@@ -97,7 +94,6 @@ class EmployerView(QWidget):
         self.table.setStyleSheet("QTableWidget::item { padding: 10px; }")
 
         self.populate_table()
-
         layout.addWidget(self.table, stretch=10)
 
         button_layout = QtWidgets.QHBoxLayout()

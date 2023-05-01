@@ -9,7 +9,7 @@ from src.employer.EmployerView import EmployerView
 
 
 class EmployerController:
-    def __init__(self, employer_data):
+    def __init__(self, employer_data, database_connection: DBConnection):
         self.employee_data = employer_data
         self.company_name = employer_data[0]
         self.company_name_id = employer_data[1]
@@ -24,7 +24,7 @@ class EmployerController:
         self.email = employer_data[10]
         self.account_number = "*" * (len(employer_data[11]) - 4) + employer_data[11][-4:]
         self.routing_number = employer_data[12]
-        self.db_connection = DBConnection()
+        self.db_connection = database_connection
         self.login_page = None
 
         self.ui = EmployerView(self)
