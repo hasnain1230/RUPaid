@@ -110,3 +110,4 @@ class EmployeeController:
         self.login_page = LoginPage(self.db_connection)
         self.login_page.show()
 
+
