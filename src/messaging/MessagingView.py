@@ -9,11 +9,11 @@ from PyQt5.QtGui import QFontDatabase
 class MessagingView(QWidget):
     def __init__(self, controller):
         super().__init__()
-        self.setMinimumSize(500,440)
+        self.setMinimumSize(500, 440)
         self.setMaximumSize(500, 440)
         self.controller = controller
         self.setWindowTitle("RUPaid - Messaging")
-        self.timer = QtCore.QTimer() # TODO: Create the function for this
+        self.timer = QtCore.QTimer()  # TODO: Create the function for this
         self.timer.start(300000)
         self.installEventFilter(self)
 
@@ -40,18 +40,18 @@ class MessagingView(QWidget):
         # Make the two buttons right next to each other
         self.messages = QtWidgets.QListWidget()
         self.messageSendTextEdit = QtWidgets.QTextEdit()
-        self.messageSendTextEdit.setFixedSize(461,40)
+        self.messageSendTextEdit.setFixedSize(461, 40)
         self.recipientSelection = QtWidgets.QComboBox()
-        self.recipientSelection.activated.connect(lambda: self.controller.get_selected_conversation(self.recipientSelection.currentText()))
+        self.recipientSelection.activated.connect(
+            lambda: self.controller.get_selected_conversation(self.recipientSelection.currentText()))
         self.sendButton = QtWidgets.QPushButton('Send')
         self.sendButton.clicked.connect(lambda: self.controller.send_message(self.messageSendTextEdit.toPlainText()))
-        
+
         layout.addLayout(title_layout, stretch=1)
         layout.addWidget(self.recipientSelection)
         layout.addWidget(self.messages)
         layout.addWidget(self.messageSendTextEdit)
         layout.addWidget(self.sendButton)
-        
 
         # Add a gray dividing line
         divider = QtWidgets.QFrame()
@@ -60,17 +60,6 @@ class MessagingView(QWidget):
         divider.setStyleSheet("background-color: gray; height: 1px;")
         self.setLayout(layout)
 
-
-
-    def eventFilter(self, a0: 'QObject', a1: 'QEvent') -> bool:
-        if a1.type() == QtCore.QEvent.MouseMove:
-            print("Mouse moved")
-            # Restart timer
-            self.timer.stop()
-            self.timer.start(300000)
-            print(self.timer.remainingTime())
-
-        return super().eventFilter(a0, a1)
 # app = QApplication(sys.argv)
 # t = MessagingView()
 # t.show()

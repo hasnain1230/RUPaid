@@ -1,12 +1,5 @@
 from PyQt5 import QtWidgets
-
-from src.RUPaid.Crypt import Hashing
-from src.employee.EmployeeView import EmployeeView
-from src.RUPaid.DatabaseConnection import DBConnection
 from src.messaging.MessagingView import MessagingView
-
-from PyQt5.QtWidgets import QApplication
-import sys
 from src.RUPaid.DatabaseConnection import DBConnection
 
 from PyQt5.QtCore import *

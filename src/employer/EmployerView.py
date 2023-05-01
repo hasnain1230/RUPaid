@@ -6,6 +6,10 @@ from PyQt5.QtGui import QFontDatabase, QRegExpValidator
 from src.employer.AddUserWindow import AddUser
 from src.employer.ResetPassword import ResetPassword
 from src.employer.EditWindow import EditDialog
+from src.hours.HoursView import HoursView
+from src.hours.HoursController import HoursController
+from src.messaging.MessagingController import MessagingController
+from src.messaging.MessagingView import MessagingView
 
 SELECTED_ROW_CONSTANT = 10
 
@@ -13,6 +17,10 @@ SELECTED_ROW_CONSTANT = 10
 class EmployerView(QWidget):
     def __init__(self, controller):
         super().__init__(parent=None)
+        self.message_view = None
+        self.messaging_controller = None
+        self.hours_controller = None
+        self.hours_view = None
         self.edit_dialog = None
         self.reset_password = None
         self.setMinimumSize(1500, 440)
@@ -80,6 +88,7 @@ class EmployerView(QWidget):
         self.table = QTableWidget()
         self.table.setColumnCount(len(self.table_labels))
         self.table.setHorizontalHeaderLabels([label[0] for label in self.table_labels])
+        self.table.horizontalHeader().setSectionResizeMode(QtWidgets.QHeaderView.ResizeToContents)
         self.table.doubleClicked.connect(lambda: self.edit_user())
         self.table.setSelectionBehavior(QtWidgets.QTableWidget.SelectionBehavior.SelectRows)
         self.table.setEditTriggers(QtWidgets.QTableWidget.NoEditTriggers)
@@ -98,13 +107,19 @@ class EmployerView(QWidget):
         self.table.horizontalHeader().setSectionResizeMode(QtWidgets.QHeaderView.Interactive)
         self.table.setStyleSheet("QTableWidget::item { padding: 10px; }")
         self.populate_table()
-        layout.addWidget(self.table, stretch=10)
+        layout.addWidget(self.table, stretch=11)
 
         button_layout = QtWidgets.QHBoxLayout()
 
+        button_layout.addStretch(0)
+
+        # Message User
+        self.message_user_button = QtWidgets.QPushButton("Message User")
+        self.message_user_button.setDisabled(True)
+        self.message_user_button.clicked.connect(self.message_button)
+        button_layout.addWidget(self.message_user_button, alignment=QtCore.Qt.AlignLeft)
+
         button_layout.addStretch(1)
-
-
 
         # Refresh Button
         refresh_button = QtWidgets.QPushButton("Refresh")
@@ -120,7 +135,8 @@ class EmployerView(QWidget):
         # View User Hours
         self.view_hours_button = QtWidgets.QPushButton("View User Hours")
         self.view_hours_button.setDisabled(True)
-        # self.view_hours_button.clicked.connect(self.view_hours)
+        self.view_hours_button.clicked.connect(self.view_hours)
+        button_layout.addWidget(self.view_hours_button, alignment=QtCore.Qt.AlignRight)
 
         # Pay User
         self.pay_user_button = QtWidgets.QPushButton("Pay User")
@@ -168,6 +184,18 @@ class EmployerView(QWidget):
         self.reset_password = ResetPassword(user_id, employer_controller=self.controller)
         self.reset_password.show()
 
+    def view_hours(self):
+        # Get the user id of the selected user
+        user_id = self.table.item(self.table.currentRow(), 0).text()
+        self.hours_controller = HoursController(user_id)
+        self.hours_view = HoursView(self.hours_controller)
+
+    def message_button(self):
+        # Get selected user_id
+        user_id = self.table.item(self.table.currentRow(), 0).text()
+        self.messaging_controller = MessagingController(user_id)
+        self.message_view = MessagingView(self.messaging_controller)
+
     def prepare_buttons(self):
         selected_row = self.table.selectedIndexes()
 
@@ -175,10 +203,14 @@ class EmployerView(QWidget):
             self.change_password_button.setDisabled(False)
             self.edit_user_button.setDisabled(False)
             self.pay_user_button.setDisabled(False)
+            self.view_hours_button.setDisabled(False)
+            self.message_user_button.setDisabled(False)
         else:
             self.change_password_button.setDisabled(True)
             self.edit_user_button.setDisabled(True)
             self.pay_user_button.setDisabled(True)
+            self.view_hours_button.setDisabled(True)
+            self.message_user_button.setDisabled(True)
 
         if len(selected_row) != 0 and len(selected_row) % SELECTED_ROW_CONSTANT == 0:
             self.remove_user_button.setDisabled(False)
@@ -186,11 +218,6 @@ class EmployerView(QWidget):
             self.remove_user_button.setDisabled(True)
 
     def edit_user(self):
-        # Get selected row
-        selected_row = self.table.selectedIndexes()
-        # Get user id of selected row
-        selected_row = self.table.item(selected_row[0].row(), 0).text()
-
         self.edit_dialog = EditDialog(table=self.table, controller=self.controller)
         self.edit_dialog.show()
 
@@ -224,12 +251,6 @@ class EmployerView(QWidget):
             self.controller.remove_user(user_id)
 
         self.populate_table()
-
-    def pay_user(self):
-        selected_row = self.table.selectedIndexes()
-        user_id = self.table.item(selected_row[0].row(), 0).text()
-        self.pay_user_dialog = PayUser(user_id, self.controller)
-        self.pay_user_dialog.show()
 
     def reset_timer(self):
         self.timer.stop()
