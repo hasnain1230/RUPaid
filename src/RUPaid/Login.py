@@ -3,11 +3,11 @@ import os.path
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import *
 from src.constants import constants
-from ScaledPixmapLabel import ScaledPixmapLabel
+from .ScaledPixmapLabel import ScaledPixmapLabel
 
 from src.employer.EmployerController import EmployerController
 
-from DatabaseConnection import DBConnection
+from .DatabaseConnection import DBConnection
 from src.employee.EmployeeController import EmployeeController
 from src.RUPaid.Crypt import Hashing
 import mariadb
