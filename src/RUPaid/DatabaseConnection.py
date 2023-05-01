@@ -79,6 +79,7 @@ class DBConnection(QWidget):
             # POPUP HERE
             print("Failed to send message")
         return 1
+    
     def get_employees_hours(self, start, end, id):
         sql = f"Select * from clock_in_out where clock_in_time > '{start}' and clock_in_time < '{end}' and user_id = {id}"
         self.cursor.execute(sql)

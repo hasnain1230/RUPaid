@@ -73,7 +73,7 @@ class MessagingController:
         if(self.db_connection.insert_message(self.user_id, recipient_id, len(message), message)):
             # messaging failed to insert
             self.populate_messages_list(recipient_id)
-        
+    
 '''
 app = QApplication(sys.argv)
 t = MessagingController(8)
