@@ -1,14 +1,26 @@
 import os
 import platform
+import subprocess
+import sys
 
 if __name__ == '__main__':
     os_name = platform.system()
 
-    if os_name == 'Windows':
-        # Could use subprocesses, but this is the quick, dirty, and easy way to do it
-        os.system(f"SET PYTHONPATH=%PYTHONPATH%;{os.getcwd()}")
-        os.system(f"cd src")
-        os.system(f"python RUPaid/runner.py")
-    else:
-        os.system(f"export PYTHONPATH=$PYTHONPATH:{os.getcwd()}")
-        os.system(f"cd src ; python3 RUPaid/runner.py")
+    print(sys.executable)
+
+    # Modify PYTHONPATH in the current environment
+    path_separator = ';' if os_name == 'Windows' else ':'
+    os.environ['PYTHONPATH'] = f"{os.environ.get('PYTHONPATH', '')}{path_separator}{os.getcwd()}"
+
+    # Print PYTHONPATH
+    print(f"PYTHONPATH: {os.environ.get('PYTHONPATH')}")
+
+    # Change the current working directory to src
+    os.chdir('src')
+
+    # Run the Python script in the modified environment
+    python_executable = sys.executable
+    subprocess.run([python_executable, f"RUPaid{os.sep}runner.py"], env=os.environ)
+
+    # Change back to the previous working directory
+    os.chdir('..')

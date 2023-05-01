@@ -4,8 +4,9 @@ from src.RUPaid.Crypt import Hashing
 from src.employee.EmployeeView import EmployeeView
 from src.RUPaid.DatabaseConnection import DBConnection
 
+
 class EmployeeController:
-    def __init__(self, employee_data):
+    def __init__(self, employee_data, database_connection: DBConnection, test=None):
         self.employee_data = employee_data
         self.company_name = employee_data[0]
         self.company_name_id = employee_data[1]
@@ -20,14 +21,16 @@ class EmployeeController:
         self.email = employee_data[10]
         self.account_number = "*" * (len(employee_data[11]) - 4) + employee_data[11][-4:]
         self.routing_number = employee_data[12]
-        self.db_connection = DBConnection()
+        self.db_connection = database_connection
         self.login_page = None
-
-        self.ui = EmployeeView(self)
-        self.ui.show()
+        
+        if test is None:
+            self.ui = EmployeeView(self)
+            self.ui.show()
 
     def save_information(self, grid_layout: QtWidgets.QGridLayout):
         # Get the new information from the grid layout
+
         new_information = {}
         for row in range(5, grid_layout.rowCount()):
             label = grid_layout.itemAtPosition(row, 0).widget()
@@ -35,6 +38,13 @@ class EmployeeController:
 
             if isinstance(label, QtWidgets.QLabel) and isinstance(value_edit, QtWidgets.QLineEdit):
                 new_information[label.text()] = value_edit.text()
+
+        # if bank account number has stars in it, then return
+        if "*" in new_information["Bank Account Number:"]:
+            # Notify user that their information was not saved
+            QtWidgets.QMessageBox.warning(self.ui, "Information Not Changed", "Bank Information was not changed. Please input a valid bank account number.")
+            return
+
 
         self.email = new_information["Email:"]
         self.account_number = new_information["Bank Account Number:"]
@@ -82,6 +92,12 @@ class EmployeeController:
         cursor.execute(query, (Hashing.hash_password(password), self.user_id))
         self.db_connection.commit_transaction()
 
+    def get_current_clock_in_status(self):
+        query = "SELECT clock_out_time FROM clock_in_out WHERE user_id = ? AND clock_out_time IS NULL"
+        cursor = self.db_connection.get_cursor()
+        cursor.execute(query, (self.user_id,))
+        return cursor.fetchone() is not None  # Returns true if the user is clocked in
+
     def logout(self, timer=None):
         if timer is not None:
             timer.stop()
@@ -91,5 +107,5 @@ class EmployeeController:
                 window.close()
 
         from src.RUPaid.Login import LoginPage
-        self.login_page = LoginPage()
+        self.login_page = LoginPage(self.db_connection)
         self.login_page.show()
