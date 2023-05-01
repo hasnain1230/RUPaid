@@ -7,7 +7,7 @@ from PyQt5.QtWidgets import QMainWindow, QVBoxLayout, QLineEdit, QLabel, QPushBu
 
 
 class AddUser(QMainWindow):
-    def __init__(self, new_user_id, controller):
+    def __init__(self, new_user_id, controller, refresh_function):
         super().__init__()
 
         self.setFixedSize(900, 790)
@@ -86,7 +86,7 @@ class AddUser(QMainWindow):
         button_layout.addWidget(self.add_user_button)
 
         self.cancel_button = QPushButton("Cancel")
-        self.cancel_button.clicked.connect(lambda: self.close())
+        self.cancel_button.clicked.connect(lambda: (refresh_function(), self.close()))
         button_layout.addWidget(self.cancel_button)
 
         layout.addWidget(username_label)
@@ -118,20 +118,24 @@ class AddUser(QMainWindow):
         self.setCentralWidget(central_widget)
 
     def add_user(self):
-        username = self.username_input.text()
-        password = self.password_input.text()
-        confirm_password = self.confirm_password_input.text()
-        first_name = self.first_name_input.text()
-        first_name = first_name[0].upper() + first_name[1:].lower()
-        last_name = self.last_name_input.text()
-        last_name = last_name[0].upper() + last_name[1:].lower()
-        role = self.role_input.currentText().lower()
-        age = self.age_input.text()
-        occupation = self.occupation_input.text()
-        email = self.email_input.text()
-        bank_account = self.bank_account_input.text()
-        bank_routing_number = self.bank_routing_number_input.text()
-        hourly_rate = self.hourly_rate_input.text()
+        try:
+            username = self.username_input.text()
+            password = self.password_input.text()
+            confirm_password = self.confirm_password_input.text()
+            first_name = self.first_name_input.text()
+            first_name = first_name[0].upper() + first_name[1:].lower()
+            last_name = self.last_name_input.text()
+            last_name = last_name[0].upper() + last_name[1:].lower()
+            role = self.role_input.currentText().lower()
+            age = self.age_input.text()
+            occupation = self.occupation_input.text()
+            email = self.email_input.text()
+            bank_account = self.bank_account_input.text()
+            bank_routing_number = self.bank_routing_number_input.text()
+            hourly_rate = self.hourly_rate_input.text()
+        except IndexError:
+            QMessageBox.about(self, "Error", "Please fill in all fields : Either first name or last name is empty")
+            return
 
         if not username or not password or not confirm_password or not first_name or not last_name or not role or not age or not occupation or not email or not bank_account or not bank_routing_number or not hourly_rate:
             QMessageBox.about(self, "Error", "Please fill in all fields")

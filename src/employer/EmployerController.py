@@ -31,6 +31,7 @@ class EmployerController:
         self.ui.show()
 
     def get_all_users(self):
+        self.db_connection.commit_transaction() # Commit any changes to the database and reset the cursor
         query = "SELECT user_id, user_name, first_name, last_name, role, age, occupation, hourly_pay, email, " \
                 "bankAccountNumber, bankRoutingNumber FROM users WHERE company_id = ?"
         cursor = self.db_connection.get_cursor()
@@ -38,6 +39,12 @@ class EmployerController:
         # Bank account number should be *'d out
 
         return cursor.fetchall()
+
+    def update_user(self, user_id, column, value):
+        query = f"UPDATE users SET {column} = ? WHERE user_id = ?"
+        cursor = self.db_connection.get_cursor()
+        cursor.execute(query, (value, user_id))
+        self.db_connection.commit_transaction()
 
     def get_next_user_id(self):
         query = "SELECT AUTO_INCREMENT " \
@@ -47,6 +54,12 @@ class EmployerController:
         cursor = self.db_connection.get_cursor()
         cursor.execute(query)
         return cursor.fetchone()[0]
+
+    def update_password(self, password):
+        query = "UPDATE users SET password = ? WHERE user_id = ?"
+        cursor = self.db_connection.get_cursor()
+        cursor.execute(query, (Hashing.hash_password(password), self.user_id))
+        self.db_connection.commit_transaction()
 
     def add_user(self, username, password, first_name, last_name, role, age, occupation, email, bank_account,
                  bank_routing_number, hourly_rate):

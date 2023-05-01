@@ -51,6 +51,6 @@ class DBConnection(QWidget):
         values = (first, last, email, urn, account, routing, id)
         self.cursor.execute(sql, values)
         self.db.commit()
-
+        
     def commit_transaction(self):
         self.db.commit()
