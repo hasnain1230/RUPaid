@@ -10,7 +10,7 @@ import copy
 
 
 class EmployerController:
-    def __init__(self, employer_data, database_connection: DBConnection):
+    def __init__(self, employer_data, database_connection: DBConnection, test = None):
         self.employee_data = employer_data
         self.company_name = employer_data[0]
         self.company_name_id = employer_data[1]
@@ -27,9 +27,9 @@ class EmployerController:
         self.routing_number = employer_data[12]
         self.db_connection = database_connection
         self.login_page = None
-
-        self.ui = EmployerView(self)
-        self.ui.show()
+        if(not test):
+            self.ui = EmployerView(self)
+            self.ui.show()
 
     def get_all_users(self):
         self.db_connection.commit_transaction() # Commit any changes to the database and reset the cursor
