@@ -3,6 +3,7 @@ from PyQt5.QtWidgets import QWidget, QTableWidget, \
     QAbstractItemView
 from PyQt5.QtGui import QFontDatabase
 from src.employer.AddUserWindow import AddUser
+from src.RUPaid.ChangePasswordWindow import ChangePasswordWindow
 
 SELECTED_ROW_CONSTANT = 10
 
@@ -86,7 +87,7 @@ class EmployerView(QWidget):
 
         # Install event listener when field is edited
         self.table.itemChanged.connect(self.item_changed)
-        self.table.itemSelectionChanged.connect(self.prepare_remove_user_button)
+        self.table.itemSelectionChanged.connect(self.prepare_buttons)
         # Allow columns to be resized
         self.table.horizontalHeader().setSectionResizeMode(QtWidgets.QHeaderView.Interactive)
         self.table.setStyleSheet("QTableWidget::item { padding: 10px; }")
@@ -97,6 +98,12 @@ class EmployerView(QWidget):
         button_layout = QtWidgets.QHBoxLayout()
 
         button_layout.addStretch(1)
+
+        # Change Password
+        self.change_password_button = QtWidgets.QPushButton("Change Password")
+        self.change_password_button.clicked.connect(lambda: self.change_password())
+        self.change_password_button.setDisabled(True)
+        button_layout.addWidget(self.change_password_button, alignment=QtCore.Qt.AlignRight)
 
         # Refresh Button
         refresh_button = QtWidgets.QPushButton("Refresh")
@@ -148,8 +155,17 @@ class EmployerView(QWidget):
         # Update the user in the database
         self.controller.update_user(user_id, column_name, value)
 
-    def prepare_remove_user_button(self):
+    def change_password(self):
+        change_password = ChangePasswordWindow(self.controller)
+        change_password.show()
+
+    def prepare_buttons(self):
         selected_row = self.table.selectedIndexes()
+
+        if len(selected_row) == SELECTED_ROW_CONSTANT:
+            self.change_password_button.setDisabled(False)
+        else:
+            self.change_password_button.setDisabled(True)
 
         if len(selected_row) != 0 and len(selected_row) % SELECTED_ROW_CONSTANT == 0:
             self.remove_user_button.setDisabled(False)
@@ -176,11 +192,14 @@ class EmployerView(QWidget):
 
     def remove_user(self):
         selected_row = self.table.selectedIndexes()
-
+        user_ids_to_remove = []
         for i in range(0, len(selected_row), SELECTED_ROW_CONSTANT):
             if i % SELECTED_ROW_CONSTANT == 0:
                 user_id = self.table.item(selected_row[i].row(), 0).text()
-                self.controller.remove_user(user_id)
+                user_ids_to_remove.append(user_id)
+
+        for user_id in user_ids_to_remove:
+            self.controller.remove_user(user_id)
 
         self.populate_table()
 

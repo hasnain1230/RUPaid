@@ -55,6 +55,12 @@ class EmployerController:
         cursor.execute(query)
         return cursor.fetchone()[0]
 
+    def update_password(self, password):
+        query = "UPDATE users SET password = ? WHERE user_id = ?"
+        cursor = self.db_connection.get_cursor()
+        cursor.execute(query, (Hashing.hash_password(password), self.user_id))
+        self.db_connection.commit_transaction()
+
     def add_user(self, username, password, first_name, last_name, role, age, occupation, email, bank_account,
                  bank_routing_number, hourly_rate):
         query = "INSERT INTO users " \

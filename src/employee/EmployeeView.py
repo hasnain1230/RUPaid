@@ -6,7 +6,7 @@ from PyQt5.QtWidgets import QWidget, QMessageBox
 
 
 from src.RUPaid.DatabaseConnection import DBConnection
-from src.employee.ChangePasswordWindow import ChangePasswordWindow
+from src.RUPaid.ChangePasswordWindow import ChangePasswordWindow
 
 
 class EmployeeView(QWidget):
