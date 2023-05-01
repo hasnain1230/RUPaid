@@ -6,7 +6,7 @@ from src.RUPaid.DatabaseConnection import DBConnection
 
 
 class EmployeeController:
-    def __init__(self, employee_data, database_connection: DBConnection):
+    def __init__(self, employee_data, database_connection: DBConnection, test=None):
         self.employee_data = employee_data
         self.company_name = employee_data[0]
         self.company_name_id = employee_data[1]
@@ -23,9 +23,10 @@ class EmployeeController:
         self.routing_number = employee_data[12]
         self.db_connection = database_connection
         self.login_page = None
-
-        self.ui = EmployeeView(self, database_connection)
-        self.ui.show()
+        
+        if test is None:
+            self.ui = EmployeeView(self)
+            self.ui.show()
 
     def save_information(self, grid_layout: QtWidgets.QGridLayout):
         # Get the new information from the grid layout
