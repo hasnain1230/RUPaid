@@ -14,8 +14,7 @@ from datetime import timedelta
 import calendar
 
 class HoursController:
-    def __init__(self, user_id, employee_id):
-        self.user_id = user_id
+    def __init__(self, employee_id):
         self.employee_id = employee_id
         
         self.db_connection = DBConnection()
@@ -109,14 +108,7 @@ class HoursController:
                 self.ui.hoursTable.setItem(6,6, QtWidgets.QTableWidgetItem(str(temp_hours_worked)))
 '''
 app = QApplication(sys.argv)
-t = HoursController(8, 50)
-
+t = HoursController(50)
 t.ui.show()
 sys.exit(app.exec_())
 '''
-
-
-
-
-
-
