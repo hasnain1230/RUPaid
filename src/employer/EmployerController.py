@@ -35,6 +35,8 @@ class EmployerController:
                 "bankAccountNumber, bankRoutingNumber FROM users WHERE company_id = ?"
         cursor = self.db_connection.get_cursor()
         cursor.execute(query, (self.company_name_id,))
+        # Bank account number should be *'d out
+
         return cursor.fetchall()
 
     def get_next_user_id(self):
@@ -85,6 +87,7 @@ class EmployerController:
     def logout(self, timer: QtCore.QTimer = None):
         if timer is not None:
             timer.stop()
+            print("Timer stopped")
 
         for window in QtWidgets.QApplication.topLevelWidgets():
             if isinstance(window, QtWidgets.QWidget):

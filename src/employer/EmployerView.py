@@ -78,11 +78,15 @@ class EmployerView(QWidget):
         self.table.setEditTriggers(QAbstractItemView.DoubleClicked)
         self.table.setSelectionBehavior(QtWidgets.QTableWidget.SelectionBehavior.SelectRows)
         self.table.setAlternatingRowColors(True)
-        self.table.setSortingEnabled(True)
+        self.table.setSortingEnabled(False)
         self.table.horizontalHeader().setStretchLastSection(True)
         self.table.horizontalHeader().setSectionResizeMode(QtWidgets.QHeaderView.Stretch)
         self.table.verticalHeader().setVisible(False)
         self.table.setShowGrid(False)
+        # Do not allow account number or routing number to be sorted, but only allow the other columns to be sorted
+        # Get the column of account number
+        account_number_column = table_labels.index("Account Number")
+
         # Install event listener when field is edited
         self.table.itemChanged.connect(self.item_changed)
         self.table.itemSelectionChanged.connect(self.prepare_remove_user_button)
@@ -100,6 +104,11 @@ class EmployerView(QWidget):
         button_layout = QtWidgets.QHBoxLayout()
 
         button_layout.addStretch(1)
+
+        # Refresh Button
+        refresh_button = QtWidgets.QPushButton("Refresh")
+        refresh_button.clicked.connect(lambda: self.populate_table())
+        button_layout.addWidget(refresh_button, alignment=QtCore.Qt.AlignRight)
 
         # Add user button
         add_user_button = QtWidgets.QPushButton("Add User")
@@ -145,9 +154,14 @@ class EmployerView(QWidget):
 
     def populate_table(self):
         users = self.controller.get_all_users()
+        # * out all but last 4 digits of account number
+
         self.table.setRowCount(len(users))
 
         for i, user in enumerate(users):
+            # Make user be a list instead of a tuple
+            user = list(user)
+            user[9] = '*' * (len(user[9]) - 4) + user[9][-4:]
             for j, value in enumerate(user):
                 self.table.setItem(i, j, QtWidgets.QTableWidgetItem(str(value)))
                 if j == 0:
