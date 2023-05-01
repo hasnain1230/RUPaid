@@ -57,25 +57,25 @@ class EmployerView(QWidget):
         divider.setStyleSheet("background-color: gray; height: 1px;")
         layout.addWidget(divider, alignment=QtCore.Qt.AlignTop, stretch=1)
 
-        table_labels = [
-            "User ID",
-            "Username",
-            "First Name",
-            "Last Name",
-            "Role",
-            "Age",
-            "Occupation",
-            "Hourly Pay",
-            "Email",
-            "Account Number",
-            "Routing Number"
+        self.table_labels = [
+            ["User ID", "user_id"],
+            ["Username", "user_name"],
+            ["First Name", "first_name"],
+            ["Last Name", "last_name"],
+            ["Role", "role"],
+            ["Age", "age"],
+            ["Occupation", "occupation"],
+            ["Hourly Pay", "hourly_pay"],
+            ["Email Address", "email"],
+            ["Bank Account Number", "bankAccountNumber"],
+            ["Routing Number", "bankRoutingNumber"]
         ]
 
         # Add a table for the employees
         self.table = QTableWidget()
-        self.table.setColumnCount(len(table_labels))
-        self.table.setHorizontalHeaderLabels(table_labels)
-        self.table.setEditTriggers(QAbstractItemView.DoubleClicked)
+        self.table.setColumnCount(len(self.table_labels))
+        self.table.setHorizontalHeaderLabels([label[0] for label in self.table_labels])
+        self.table.doubleClicked.connect(lambda: self.edit_user())
         self.table.setSelectionBehavior(QtWidgets.QTableWidget.SelectionBehavior.SelectRows)
         self.table.setAlternatingRowColors(True)
         self.table.setSortingEnabled(False)
@@ -83,8 +83,6 @@ class EmployerView(QWidget):
         self.table.horizontalHeader().setSectionResizeMode(QtWidgets.QHeaderView.Stretch)
         self.table.verticalHeader().setVisible(False)
         self.table.setShowGrid(False)
-        # Do not allow account number or routing number to be sorted, but only allow the other columns to be sorted
-        # Get the column of account number
 
         # Install event listener when field is edited
         self.table.itemChanged.connect(self.item_changed)
@@ -130,22 +128,36 @@ class EmployerView(QWidget):
         self.table.setItem(self.table.rowCount() - 1, 0,
                            QtWidgets.QTableWidgetItem(f"{self.controller.get_next_user_id()}"))
 
-        new_user = AddUser(self.controller.get_next_user_id, self.controller)
+        new_user = AddUser(self.controller.get_next_user_id, self.controller, self.populate_table)
         new_user.show()
 
     def item_changed(self, item):
-        print(item.row(), item.column(), item.text())
+        # Get the row and column of the item that was changed
+        row = item.row()
+        column = item.column()
+
+        # Find the column name from the table labels
+        column_name = self.table_labels[column][1]
+
+        # Get the value of the item
+        value = item.text()
+
+        # Get the user id of the user that was changed
+        user_id = self.table.item(row, 0).text()
+
+        # Update the user in the database
+        self.controller.update_user(user_id, column_name, value)
 
     def prepare_remove_user_button(self):
         selected_row = self.table.selectedIndexes()
-
-        print(selected_row)
-        print(len(selected_row))
 
         if len(selected_row) != 0 and len(selected_row) % SELECTED_ROW_CONSTANT == 0:
             self.remove_user_button.setDisabled(False)
         else:
             self.remove_user_button.setDisabled(True)
+
+    def edit_user(self):
+        pass
 
     def populate_table(self):
         users = self.controller.get_all_users()

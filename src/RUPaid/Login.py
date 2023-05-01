@@ -18,11 +18,8 @@ class LoginPage(QWidget):
         super().__init__(parent=None)
         self.employee_controller = None
         self.employer_controller = None
-<<<<<<< HEAD
         self.database_connection = DBConnection() if database_connection is None else database_connection
-=======
         self.database_connection = DBConnection()
->>>>>>> start
         self.cursor = self.database_connection.get_cursor()
         self.username_input = None
         self.password_input = None
