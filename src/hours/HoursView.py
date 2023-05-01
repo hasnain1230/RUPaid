@@ -24,7 +24,7 @@ class HoursView(QWidget):
         layout.setSpacing(20)
 
         self.hoursTable = QtWidgets.QTableWidget()        
-        self.hoursTable.setRowCount(2)
+        self.hoursTable.setRowCount(7)
         self.hoursTable.setColumnCount(7)
         self.hoursTable.setColumnWidth(0,108)
         self.hoursTable.setColumnWidth(1,108)
