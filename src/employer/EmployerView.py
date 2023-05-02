@@ -192,8 +192,7 @@ class EmployerView(QWidget):
 
     def message_button(self):
         # Get selected user_id
-        user_id = self.table.item(self.table.currentRow(), 0).text()
-        self.messaging_controller = MessagingController(user_id)
+        self.messaging_controller = MessagingController(self.controller.user_id)
         self.message_view = MessagingView(self.messaging_controller)
 
     def prepare_buttons(self):

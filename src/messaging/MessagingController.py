@@ -16,6 +16,7 @@ class MessagingController:
         self.get_selected_conversation("SYSTEM")
 
     def populate_messages_list(self, recipient_id):
+        print('here')
         messages_cursor = self.db_connection.get_employee_conversation(self.user_id, recipient_id)
         self.ui.messages.clear()
         for i in messages_cursor:
@@ -25,6 +26,7 @@ class MessagingController:
                 message = self.wrap_message(message + '\n')
             messageWidgetItem = QtWidgets.QListWidgetItem(message)
             if i[0] == self.user_id:
+                print('here')
                 messageWidgetItem.setTextAlignment(Qt.AlignRight)
             else:
                 messageWidgetItem.setTextAlignment(Qt.AlignLeft)
@@ -52,7 +54,6 @@ class MessagingController:
             lastName = employee[6]
             role = employee[7]
             formatted_entitity = f'{lastName},  {firstName} - {role}'
-            self.ui.recipientSelection.addItem(formatted_entitity)
 
             if id_ == 0:
                 self.ui.recipientSelection.addItem("SYSTEM")
