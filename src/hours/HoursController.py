@@ -45,7 +45,6 @@ class HoursController:
 
         hours = self.get_all_hours(start, end)
         for row in hours:
-            print(row)
             temp_start_day = row[1].day
 
             temp_start_time = row[1].time()

@@ -257,13 +257,8 @@ class EmployeeView(QWidget):
 
     def eventFilter(self, a0: 'QObject', a1: 'QEvent') -> bool:
         if a1.type() == QtCore.QEvent.MouseMove:
-            print("Mouse moved")
             self.timer.stop()
             self.timer.start(300000)
-            print(self.timer.remainingTime())
 
         return super().eventFilter(a0, a1)
-
-    def resizeEvent(self, a0: QtGui.QResizeEvent) -> None:
-        print(f"Window resized to {self.width()}x{self.height()}")
 

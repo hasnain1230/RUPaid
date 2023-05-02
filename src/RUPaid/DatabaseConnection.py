@@ -15,7 +15,6 @@ class DBConnection(QWidget):
         self.cursor = None
 
         for name in host_names:
-            print(name)
             try:
                 self.db = mariadb.connect(
                     user='RUPaid',

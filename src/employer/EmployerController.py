@@ -207,7 +207,6 @@ class EmployerController:
     def logout(self, timer: QtCore.QTimer = None):
         if timer is not None:
             timer.stop()
-            print("Timer stopped")
 
         for window in QtWidgets.QApplication.topLevelWidgets():
             if isinstance(window, QtWidgets.QWidget):

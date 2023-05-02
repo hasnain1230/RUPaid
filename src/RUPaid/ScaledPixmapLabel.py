@@ -15,7 +15,4 @@ class ScaledPixmapLabel(QLabel):
         scaled_pixmap = self.original_pixmap.scaled(self.size(), Qt.KeepAspectRatio, Qt.SmoothTransformation)
         self.setPixmap(scaled_pixmap)
         # Print the current path of current python file
-        pythonpath = os.environ.get('PYTHONPATH')
-        print("PYTHONPATH:", pythonpath)
-        print(f'Pixmap size: {self.pixmap().size()} {self.pixmap_path}')
         super().resizeEvent(event)

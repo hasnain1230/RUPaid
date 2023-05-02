@@ -1,0 +1,90 @@
+Collaboration:
+
+
+Alex Harris:
+* Components Developed:
+   * Messaging
+      * Database for messages
+      * Send message
+      * Populate message conversation
+      * UI for Messaging
+      * Logic for Messaging
+      * Populate recipient list
+   * Hours schedules
+      * UI for Hours scheduled
+      * Logic for Hours schedules
+   * UI Development
+   * Database Development
+      * Preset queries for messaging and scheduling
+* Testing Developed:
+   * Employee Testing
+   * Messaging Testing
+
+
+Hasnain Ali:
+* Components Developed:
+   * Login
+      * User authentication
+   * Employer
+      * Edit employee
+      * Add employee
+      * Delete employe
+      * Pay employee
+      * UI and logic
+   * Employee
+      * Change employee
+      * Clock in/out
+      * Change password
+      * UI and logic
+
+
+   * Payment
+      * Pay employee
+      * Logic
+   * Hashing
+   * Reset Password
+* Hosting and managing database
+* Environment Setup for all OS types
+* Starter File
+* Tested-non functional requirements
+
+
+John Borton:
+* Testing Developed:
+   * Login Testing
+   * Employer Testing
+* Integrated Testing with Components
+   * Login
+   * Employer
+   * Employee
+* Secondary Tester for Integration Testing
+   * Add User
+   * Remove User
+   * Edit Info
+   * Remove Info
+   * Messaging
+* Documented integration tests
+* Documented unit tests
+
+
+Carolette Saguil:
+* Main Tester for Integration Testing
+   * Login
+   * Logout
+   * Add User
+   * Remove User
+   * Edit Info
+   * View Info
+   * Track Hours
+   * Pay User
+   * Messaging
+   * Notifications
+* Documented integration tests
+* Documented much of the unit tests
+* Pair coding with Hasnain Ali
+   * Worked on UI design
+   * Reported bugs to developers
+
+
+Version Control Tool:
+We used GitHub and Github CLI (command line) as our version control tool during this project.
