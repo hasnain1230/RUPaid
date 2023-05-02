@@ -96,6 +96,12 @@ class EmployeeController:
         cursor.execute(query, (self.user_id,))
         return cursor.fetchone() is not None  # Returns true if the user is clocked in
 
+    def get_user_account_number(self):
+        query = "SELECT bankAccountNumber FROM users WHERE user_id = ?"
+        cursor = self.db_connection.get_cursor()
+        cursor.execute(query, (self.user_id,))
+        return cursor.fetchone()[0]
+
     def logout(self, timer=None):
         if timer is not None:
             timer.stop()
