@@ -3,6 +3,8 @@ from PyQt5 import QtGui
 from PyQt5 import QtWidgets, QtCore
 from PyQt5.QtGui import QFontDatabase
 from PyQt5.QtWidgets import QWidget, QMessageBox
+from src.messaging.MessagingView import MessagingView
+from src.messaging.MessagingController import MessagingController
 
 
 from src.RUPaid.DatabaseConnection import DBConnection
@@ -12,6 +14,9 @@ from src.employee.ChangePasswordWindow import ChangePasswordWindow
 class EmployeeView(QWidget):
     def __init__(self, controller, database_connection: DBConnection):
         super(EmployeeView, self).__init__()
+        self.messaging_controller = None
+        self.messaging_view = None
+        self.messages_button = None
         self.change_password_dialog = None
         self.change_password_button = None
         self.edit_button = None
@@ -35,7 +40,7 @@ class EmployeeView(QWidget):
         self.installEventFilter(self)
 
     def init_ui(self):
-        self.setFixedWidth(1000)
+        self.setFixedSize(1100, 440)
 
         layout = QtWidgets.QVBoxLayout()
         self.setWindowTitle("RUPaid - Employee")
@@ -71,21 +76,26 @@ class EmployeeView(QWidget):
 
         title_layout.addWidget(self.clock_in_button, 0, 1, alignment=QtCore.Qt.AlignRight)
 
+        # Messages Button
+        self.messages_button = QtWidgets.QPushButton("Messages")
+        self.messages_button.clicked.connect(self.messages_button_clicked)
+        title_layout.addWidget(self.messages_button, 0, 2, alignment=QtCore.Qt.AlignRight)
+
         # Add Edit Button
         self.edit_button = QtWidgets.QPushButton("Edit Information")
         self.edit_button.clicked.connect(self.edit_information)
-        title_layout.addWidget(self.edit_button, 0, 2, alignment=QtCore.Qt.AlignRight)
+        title_layout.addWidget(self.edit_button, 0, 3, alignment=QtCore.Qt.AlignRight)
 
         # Add Change Password Button
         self.change_password_button = QtWidgets.QPushButton("Change Password")
         self.change_password_button.clicked.connect(self.change_password)
-        title_layout.addWidget(self.change_password_button, 0, 3, alignment=QtCore.Qt.AlignRight)
+        title_layout.addWidget(self.change_password_button, 0, 4, alignment=QtCore.Qt.AlignRight)
 
         # Add logout button
         logout_button = QtWidgets.QPushButton("Logout")
         logout_button.clicked.connect(lambda: self.controller.logout(timer=self.timer))
         logout_button.setStyleSheet("background-color: red; color: white; border-radius: 5px; padding: 5px;")
-        title_layout.addWidget(logout_button, 0, 4, alignment=QtCore.Qt.AlignRight)
+        title_layout.addWidget(logout_button, 0, 5, alignment=QtCore.Qt.AlignRight)
 
         # Make the two buttons right next to each other
         title_layout.setColumnStretch(0, 1)
@@ -213,6 +223,11 @@ class EmployeeView(QWidget):
     def change_password(self):
         self.change_password_dialog = ChangePasswordWindow(self.controller)
         self.change_password_dialog.show()
+
+    def messages_button_clicked(self):
+        self.messaging_controller = MessagingController(self.controller.user_id, self.controller.company_name_id)
+        self.messaging_window = MessagingView(self.messaging_controller)
+
 
     def eventFilter(self, a0: 'QObject', a1: 'QEvent') -> bool:
         if a1.type() == QtCore.QEvent.MouseMove:
