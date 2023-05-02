@@ -1,5 +1,5 @@
 import sys
-from datetime import timedelta
+from datetime import timedelta, datetime
 
 import mariadb
 from PyQt5 import QtCore, QtWidgets
@@ -57,6 +57,10 @@ class EmployerController:
         cursor.execute(query, (user_id,))
         time_diffs = cursor.fetchall()
 
+        if len(time_diffs) == 0:
+            QtWidgets.QMessageBox.critical(self.ui, "Error", "No time worked to pay the user for.")
+            return
+
         rounded_time_diffs = [self.round_to_nearest_minutes(time_diff[1], 15 * 60) for time_diff in time_diffs]
 
         start_time = rounded_time_diffs[0]
@@ -83,13 +87,21 @@ class EmployerController:
         total_amount = total_time_worked.total_seconds() / 3600 * hourly_pay
 
         # Insert the payment into the pay_user table
-        query = "INSERT INTO pay_user (user_id, payment_date, payment_amount, hours_paid) VALUES (?, NOW(), ?, ?)"
+        query = "INSERT INTO pay_user (user_id, payment_date, payment_amount, time_pay_period) VALUES (?, NOW(), ?, ?)"
         cursor = self.db_connection.get_cursor()
+        # Convert total_time_worked to HH:MM:SS
+        total_time_worked = self.timedelta_to_datetime_str(total_time_worked).strftime("%H:%M:%S")
+
         cursor.execute(query, (user_id, total_amount, total_time_worked))
 
         self.db_connection.commit_transaction()
 
         return total_amount
+
+    def timedelta_to_datetime_str(self, td):
+        epoch = datetime(1900, 1, 1)
+        dt = epoch + td
+        return dt
 
     def get_user_clock_in_history(self, user_id):
         query = "SELECT * FROM clock_in_out WHERE user_id = ?"

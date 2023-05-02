@@ -114,8 +114,7 @@ class EmployerView(QWidget):
         button_layout.addStretch(0)
 
         # Message User
-        self.message_user_button = QtWidgets.QPushButton("View User Messages")
-        self.message_user_button.setDisabled(True)
+        self.message_user_button = QtWidgets.QPushButton("View Messages")
         self.message_user_button.clicked.connect(self.message_button)
         button_layout.addWidget(self.message_user_button, alignment=QtCore.Qt.AlignLeft)
 
@@ -203,13 +202,11 @@ class EmployerView(QWidget):
             self.edit_user_button.setDisabled(False)
             self.pay_user_button.setDisabled(False)
             self.view_hours_button.setDisabled(False)
-            self.message_user_button.setDisabled(False)
         else:
             self.change_password_button.setDisabled(True)
             self.edit_user_button.setDisabled(True)
             self.pay_user_button.setDisabled(True)
             self.view_hours_button.setDisabled(True)
-            self.message_user_button.setDisabled(True)
 
         if len(selected_row) != 0 and len(selected_row) % SELECTED_ROW_CONSTANT == 0:
             self.remove_user_button.setDisabled(False)
@@ -257,7 +254,12 @@ class EmployerView(QWidget):
         # Get user first and last name
         first_name = self.table.item(self.table.currentRow(), 2).text()
         last_name = self.table.item(self.table.currentRow(), 3).text()
-        total_comp = round(self.controller.pay_user(user_id), 2)
+        total_comp = self.controller.pay_user(user_id)
+
+        if total_comp is None:
+            return
+        else:
+            total_comp = round(total_comp, 2)
 
         QtWidgets.QMessageBox.information(self, "Success", f"Paid {first_name} {last_name} ${total_comp:.2f}")
 

@@ -34,7 +34,7 @@ class UserHistory(QMainWindow):
         self.setup_clock_in_history_table()
 
     def setup_payment_history_table(self):
-        headers = ["User ID", "Payment Date", "Payment Amount", "Time Paid"]
+        headers = ["User ID", "Payment Date", "Payment Amount", "Hours Worked"]
         self.payment_history_table.setColumnCount(len(headers))
         self.payment_history_table.setHorizontalHeaderLabels(headers)
         self.payment_history_table.setAlternatingRowColors(True)
@@ -61,4 +61,9 @@ class UserHistory(QMainWindow):
         self.clock_in_history_table.setRowCount(len(clock_in_data))
         for row, data in enumerate(clock_in_data):
             for column, item in enumerate(data):
-                self.clock_in_history_table.setItem(row, column, QTableWidgetItem(str(item)))
+                if column == 5 and item == 0:
+                    self.clock_in_history_table.setItem(row, column, QTableWidgetItem("No"))
+                elif column == 5 and item == 1:
+                    self.clock_in_history_table.setItem(row, column, QTableWidgetItem("Yes"))
+                else:
+                    self.clock_in_history_table.setItem(row, column, QTableWidgetItem(str(item)))
