@@ -225,7 +225,7 @@ class EmployeeView(QWidget):
         self.change_password_dialog.show()
 
     def messages_button_clicked(self):
-        self.messaging_controller = MessagingController(self.controller.user_id)
+        self.messaging_controller = MessagingController(self.controller.user_id, self.controller.company_name_id)
         self.messaging_window = MessagingView(self.messaging_controller)
 
 
