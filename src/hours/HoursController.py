@@ -104,8 +104,7 @@ class HoursController:
 
 '''
 app = QApplication(sys.argv)
-t = HoursController(8, 50)
-
+t = HoursController(50)
 t.ui.show()
 sys.exit(app.exec_())
 '''

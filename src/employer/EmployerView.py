@@ -6,8 +6,7 @@ from PyQt5.QtGui import QFontDatabase, QRegExpValidator
 from src.employer.AddUserWindow import AddUser
 from src.employer.ResetPassword import ResetPassword
 from src.employer.EditWindow import EditDialog
-from src.hours.HoursView import HoursView
-from src.hours.HoursController import HoursController
+from src.employer.UserHistory import UserHistory
 from src.messaging.MessagingController import MessagingController
 from src.messaging.MessagingView import MessagingView
 
@@ -17,6 +16,7 @@ SELECTED_ROW_CONSTANT = 10
 class EmployerView(QWidget):
     def __init__(self, controller):
         super().__init__(parent=None)
+        self.view_hours = None
         self.message_view = None
         self.messaging_controller = None
         self.hours_controller = None
@@ -114,7 +114,7 @@ class EmployerView(QWidget):
         button_layout.addStretch(0)
 
         # Message User
-        self.message_user_button = QtWidgets.QPushButton("Message User")
+        self.message_user_button = QtWidgets.QPushButton("View User Messages")
         self.message_user_button.setDisabled(True)
         self.message_user_button.clicked.connect(self.message_button)
         button_layout.addWidget(self.message_user_button, alignment=QtCore.Qt.AlignLeft)
@@ -133,15 +133,15 @@ class EmployerView(QWidget):
         button_layout.addWidget(self.change_password_button, alignment=QtCore.Qt.AlignRight)
 
         # View User Hours
-        self.view_hours_button = QtWidgets.QPushButton("View User Hours")
+        self.view_hours_button = QtWidgets.QPushButton("View User Hours / Payment History")
         self.view_hours_button.setDisabled(True)
-        self.view_hours_button.clicked.connect(self.view_hours)
+        self.view_hours_button.clicked.connect(self.view_hours_action)
         button_layout.addWidget(self.view_hours_button, alignment=QtCore.Qt.AlignRight)
 
         # Pay User
         self.pay_user_button = QtWidgets.QPushButton("Pay User")
         self.pay_user_button.setDisabled(True)
-        # self.pay_user_button.clicked.connect(self.pay_user)
+        self.pay_user_button.clicked.connect(self.pay_user_action)
         button_layout.addWidget(self.pay_user_button, alignment=QtCore.Qt.AlignRight)
 
         # Add user button
@@ -184,11 +184,11 @@ class EmployerView(QWidget):
         self.reset_password = ResetPassword(user_id, employer_controller=self.controller)
         self.reset_password.show()
 
-    def view_hours(self):
+    def view_hours_action(self):
         # Get the user id of the selected user
         user_id = self.table.item(self.table.currentRow(), 0).text()
-        self.hours_controller = HoursController(user_id)
-        self.hours_view = HoursView(self.hours_controller)
+        self.view_hours = UserHistory(user_id, self.controller)
+        self.view_hours.show()
 
     def message_button(self):
         # Get selected user_id
@@ -251,6 +251,16 @@ class EmployerView(QWidget):
             self.controller.remove_user(user_id)
 
         self.populate_table()
+
+    def pay_user_action(self):
+        # Get selected user id
+        user_id = self.table.item(self.table.currentRow(), 0).text()
+        # Get user first and last name
+        first_name = self.table.item(self.table.currentRow(), 2).text()
+        last_name = self.table.item(self.table.currentRow(), 3).text()
+        total_comp = round(self.controller.pay_user(user_id), 2)
+
+        QtWidgets.QMessageBox.information(self, "Success", f"Paid {first_name} {last_name} ${total_comp:.2f}")
 
     def reset_timer(self):
         self.timer.stop()

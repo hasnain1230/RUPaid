@@ -6,8 +6,6 @@ import sys
 if __name__ == '__main__':
     os_name = platform.system()
 
-    print(sys.executable)
-
     # Modify PYTHONPATH in the current environment
     path_separator = ';' if os_name == 'Windows' else ':'
     os.environ['PYTHONPATH'] = f"{os.environ.get('PYTHONPATH', '')}{path_separator}{os.getcwd()}"
