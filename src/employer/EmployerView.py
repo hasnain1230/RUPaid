@@ -31,6 +31,7 @@ class EmployerView(QWidget):
         self.timer.timeout.connect(
             lambda: self.controller.logout(timer=self.timer), )  # TODO: Create the function for this
         self.timer.start(300000)
+        self.messaging_controller = MessagingController(self.controller.user_id, show=False)
         self.installEventFilter(self)
 
         layout = QtWidgets.QVBoxLayout()
@@ -190,9 +191,7 @@ class EmployerView(QWidget):
         self.view_hours.show()
 
     def message_button(self):
-        # Get selected user_id
-        self.messaging_controller = MessagingController(self.controller.user_id)
-        self.message_view = MessagingView(self.messaging_controller)
+        self.messaging_controller.ui.show()
 
     def prepare_buttons(self):
         selected_row = self.table.selectedIndexes()
@@ -262,6 +261,9 @@ class EmployerView(QWidget):
             total_comp = round(total_comp, 2)
 
         QtWidgets.QMessageBox.information(self, "Success", f"Paid {first_name} {last_name} ${total_comp:.2f}")
+        # Message user
+        self.messaging_controller.send_message_as_system(f"Your employer has paid you ${total_comp:.2f}", user_id)
+
 
     def reset_timer(self):
         self.timer.stop()

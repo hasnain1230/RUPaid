@@ -154,14 +154,36 @@ class EmployeeView(QWidget):
             if not isinstance(value_label, QtWidgets.QLineEdit) and isinstance(value_label, QtWidgets.QLabel):
                 value = value_label.text()
                 value_edit = QtWidgets.QLineEdit()
+
+                if row == 6 or row == 7:
+                    # Only allow numbers for the account number and routing number
+                    value_edit.setValidator(QtGui.QIntValidator())
+
+                if row == 6:
+                    value_edit.setEchoMode(QtWidgets.QLineEdit.Password)
+
                 value_edit.setText(value)
-                value_edit.returnPressed.connect(lambda: (self.controller.save_information(self.grid_layout), self.post_save()))
+                value_edit.returnPressed.connect(self.check_edited_information)
                 self.grid_layout.replaceWidget(value_label, value_edit)
                 value_label.deleteLater()
 
         self.edit_button.setText("Save Changes")
         self.edit_button.clicked.disconnect()
-        self.edit_button.clicked.connect(lambda: (self.controller.save_information(self.grid_layout), self.post_save()))
+        self.edit_button.clicked.connect(self.check_edited_information)
+
+    def check_edited_information(self):
+        for row in range(5, self.grid_layout.rowCount()):
+            value_edit = self.grid_layout.itemAtPosition(row, 1).widget()
+
+            if isinstance(value_edit, QtWidgets.QLineEdit):
+                value = value_edit.text()
+
+                if value == "":
+                    QtWidgets.QMessageBox.critical(self, "Error", "Please fill out all fields.")
+                    return
+
+        self.controller.save_information(self.grid_layout)
+        self.post_save()
 
     def post_save(self):
         self.edit_button.setText("Edit Information")
