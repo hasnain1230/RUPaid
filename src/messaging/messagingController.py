@@ -3,7 +3,7 @@ from PyQt5 import QtWidgets
 from src.RUPaid.Crypt import Hashing
 from src.employee.EmployeeView import EmployeeView
 from src.RUPaid.DatabaseConnection import DBConnection
-from src.messaging.MessagingView import MessagingView
+from src.messaging.messagingView import MessagingView
 
 from PyQt5.QtWidgets import QApplication
 import sys
@@ -12,11 +12,12 @@ from src.RUPaid.DatabaseConnection import DBConnection
 from PyQt5.QtCore import *
 
 class MessagingController:
-    def __init__(self, user_id):
+    def __init__(self, user_id, connection, test = None):
         self.user_id = user_id
-        self.db_connection = DBConnection()
+        self.db_connection = connection
         self.ui = MessagingView(self)
-        self.ui.show()
+        if(test == None):
+            self.ui.show()
         self.populate_recipients_list()
         self.get_selected_conversation("SYSTEM")
         
@@ -90,11 +91,6 @@ class MessagingController:
             self.ui.messageSendTextEdit.setText("")
             self.populate_messages_list(recipient_id)
     
-
-app = QApplication(sys.argv)
-t = MessagingController(50)
-t.ui.show()
-sys.exit(app.exec_())
 
 
 
