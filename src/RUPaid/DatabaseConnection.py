@@ -39,15 +39,15 @@ class DBConnection(QWidget):
         return self.cursor
 
     def select_names_from_table(self, table='users'):
-        self.cursor.execute(f'SELECT firstName, lastName FROM {table}')
+        self.cursor.execute(f'SELECT first_name, last_name FROM {table}')
         return self.cursor
 
     def get_employee_by_name(self, first, last, table='users'):
-        self.cursor.execute(f"SELECT * from {table} WHERE firstName = '{first}' and lastName = '{last}'")
+        self.cursor.execute(f"SELECT * from {table} WHERE first_name = '{first}' and last_name = '{last}'")
         return self.cursor
 
     def update_employee(self, id, first, last, email, urn, account, routing):
-        sql = "UPDATE users SET firstName = %s, lastName = %s, email = %s, user_name = %s, bankAccountNumber = %s, bankRoutingNumber = %s WHERE id = %s"
+        sql = "UPDATE users SET first_name = %s, last_name = %s, email = %s, user_name = %s, bankAccountNumber = %s, bankRoutingNumber = %s WHERE id = %s"
         values = (first, last, email, urn, account, routing, id)
         self.cursor.execute(sql, values)
         self.db.commit()

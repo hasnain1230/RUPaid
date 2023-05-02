@@ -23,9 +23,10 @@ class EmployeeController:
         self.routing_number = employee_data[12]
         self.db_connection = database_connection
         self.login_page = None
+        self.test=test
         
         if test is None:
-            self.ui = EmployeeView(self)
+            self.ui = EmployeeView(self, database_connection)
             self.ui.show()
 
     def save_information(self, grid_layout: QtWidgets.QGridLayout):
@@ -108,4 +109,7 @@ class EmployeeController:
 
         from src.RUPaid.Login import LoginPage
         self.login_page = LoginPage(self.db_connection)
-        self.login_page.show()
+        if self.test is None:
+            self.login_page.show()
+        else:
+            return True

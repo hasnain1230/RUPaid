@@ -1,28 +1,60 @@
 from src.RUPaid.Login import *
-import unittest
+import sys
+from PyQt5.QtWidgets import QApplication, QLineEdit
+import src.RUPaid.DatabaseConnection 
 
-class LoginTest(unittest.TestCase):
+app = QApplication(sys.argv)
+connection=DBConnection()
+cursor = connection.get_cursor()
 
-    def test_create(self):
-        #login_page = LoginPage()
-        self.assertTrue(True)
+username_input=QLineEdit()
+password_input=QLineEdit()
 
-    def test_login_valid_user_pass_employee(self):
+def test_init():
+    login_page = LoginPage(database_connection=connection,test=True)
+    assert login_page!=None and login_page.database_connection==connection
 
-        self.assertTrue(True)
-    
-    def test_login_valid_user_pass_employer(self):
-       self.assertTrue(True)
-    
+def test_login_valid_user_pass_employer():
+    login_page = LoginPage(database_connection=connection,test=True)
+    username_input.setText('test_user')
+    password_input.setText('test_pass')
+    login_page.username_input=username_input
+    login_page.password_input=password_input
+    result=login_page.login()
+    assert result==True
 
-    def test_login_valid_user_invalid_pass(self):
-        self.assertTrue(True)
+def test_login_valid_user_pass_employee():
+    login_page = LoginPage(database_connection=connection,test=True)
+    username_input.setText('test_employee')
+    password_input.setText('test_employee')
+    login_page.username_input=username_input
+    login_page.password_input=password_input
+    result=login_page.login()
+    assert result==True
 
+def test_login_valid_employer_invalid_pass():
+    login_page = LoginPage(database_connection=connection,test=True)
+    username_input.setText('test_user')
+    password_input.setText('invalid_pass')
+    login_page.username_input=username_input
+    login_page.password_input=password_input
+    result=login_page.login()
+    assert result==False
 
-    def test_login_invalid_user_invalid_pass(self):
-        self.assertTrue(True)
-    
-if __name__ == '__main__':
-    unittest.main()
+def test_login_valid_employee_invalid_pass():
+    login_page = LoginPage(database_connection=connection,test=True)
+    username_input.setText('test_employee')
+    password_input.setText('invalid_pass')
+    login_page.username_input=username_input
+    login_page.password_input=password_input
+    result=login_page.login()
+    assert result==False
 
-
+def test_login_invalid_user_invalid_pass():
+    login_page = LoginPage(database_connection=connection,test=True)
+    username_input.setText('invalid_user')
+    password_input.setText('invalid_pass')
+    login_page.username_input=username_input
+    login_page.password_input=password_input
+    result=login_page.login()
+    assert result==False
