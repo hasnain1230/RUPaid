@@ -7,6 +7,7 @@ from src.RUPaid.DatabaseConnection import DBConnection
 
 class EmployeeController:
     def __init__(self, employee_data, database_connection: DBConnection, test=None):
+    def __init__(self, employee_data, database_connection: DBConnection, test=None):
         self.employee_data = employee_data
         self.company_name = employee_data[0]
         self.company_name_id = employee_data[1]
@@ -23,6 +24,10 @@ class EmployeeController:
         self.routing_number = employee_data[12]
         self.db_connection = database_connection
         self.login_page = None
+
+        if test is None:
+            self.ui = EmployeeView(self, self.db_connection)
+            self.ui.show()
         self.test=test
         
         if test is None:
@@ -42,13 +47,11 @@ class EmployeeController:
 
         # if bank account number has stars in it, then return
         if "*" in new_information["Bank Account Number:"]:
-            # Notify user that their information was not saved
-            QtWidgets.QMessageBox.warning(self.ui, "Information Not Changed", "Bank Information was not changed. Please input a valid bank account number.")
-            return
-
+            self.account_number = self.account_number
+        else:
+            self.account_number = new_information["Bank Account Number:"]
 
         self.email = new_information["Email:"]
-        self.account_number = new_information["Bank Account Number:"]
         self.routing_number = new_information["Bank Routing Number:"]
 
         # Update the database
@@ -108,6 +111,7 @@ class EmployeeController:
                 window.close()
 
         from src.RUPaid.Login import LoginPage
+
         self.login_page = LoginPage(self.db_connection)
         if self.test is None:
             self.login_page.show()
