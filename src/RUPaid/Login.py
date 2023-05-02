@@ -80,7 +80,6 @@ class LoginPage(QWidget):
                 return -1
 
         if results is not None:
-            print("Login successful")
             if self.test is None:
                 QMessageBox.information(self, "Login successful", "Login successful")
             else:
@@ -93,16 +92,8 @@ class LoginPage(QWidget):
                 self.employer_controller = EmployerController(results, self.database_connection)
 
         else:
-            print("Login failed")
             if self.test is None:
                 QMessageBox.warning(self, "Login failed!", "Login failed! Either your username or password is incorrect.")
             else: 
                 return 0
 
-    def resizeEvent(self, event):
-        # This method is called when the window is resized
-        # You can add your resize listener logic here
-        print(f"Window resized: {event.size()}")
-
-        # Call the parent class's resizeEvent method
-        super().resizeEvent(event)

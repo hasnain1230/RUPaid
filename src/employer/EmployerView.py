@@ -238,7 +238,7 @@ class EmployerView(QWidget):
             if i % SELECTED_ROW_CONSTANT == 0:
                 user_id = self.table.item(selected_row[i].row(), 0).text()
 
-                if user_id == self.controller.user_id:
+                if int(user_id) == self.controller.user_id:
                     QtWidgets.QMessageBox.warning(self, "Error", "You cannot remove yourself")
                     continue
 
@@ -270,14 +270,11 @@ class EmployerView(QWidget):
     def reset_timer(self):
         self.timer.stop()
         self.timer.start(300000)
-        print("Time Reset")
 
     def eventFilter(self, a0: 'QObject', a1: 'QEvent') -> bool:
         if a1.type() == QtCore.QEvent.MouseMove:
-            print("Mouse moved")
             # Restart timer
             self.timer.stop()
             self.timer.start(300000)
-            print(self.timer.remainingTime())
 
         return super().eventFilter(a0, a1)

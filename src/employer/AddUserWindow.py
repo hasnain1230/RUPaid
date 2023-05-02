@@ -157,9 +157,6 @@ class AddUser(QMainWindow):
                                                QtWidgets.QMessageBox.Ok)
                 return
 
-    def resizeEvent(self, a0: QtGui.QResizeEvent) -> None:
-        print(self.size())
-
 
 if __name__ == '__main__':
     import sys
