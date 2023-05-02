@@ -192,6 +192,7 @@ class EmployerView(QWidget):
 
     def message_button(self):
         self.messaging_controller.ui.show()
+        self.messaging_controller.populate_recipients_list()
 
 
     def prepare_buttons(self):
