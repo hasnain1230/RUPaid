@@ -4,8 +4,8 @@ from src.RUPaid.DatabaseConnection import DBConnection
 
 
 class Hashing:
-    def __init__(self):
-        self.cursor = DBConnection().get_cursor()
+    def __init__(self, database_connection):
+        self.cursor = database_connection.get_cursor()
 
     @staticmethod
     def hash_password(password):

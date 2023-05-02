@@ -1,21 +1,18 @@
+from PyQt5 import QtGui
 from PyQt5.QtWidgets import QMainWindow, QVBoxLayout, QLineEdit, QLabel, QPushButton, QWidget, QMessageBox
 
 
-class ChangePasswordWindow(QMainWindow):
-    def __init__(self, employee_controller):
+class ResetPassword(QMainWindow):
+    def __init__(self, user_id_to_reset, employer_controller):
         super().__init__()
 
-        self.employee_controller = employee_controller
+        self.user_id_to_reset = user_id_to_reset
+        self.employer_controller = employer_controller
 
         self.setWindowTitle("Password Change")
-        self.setFixedSize(390, 232)
+        self.setFixedSize(580, 170)
         central_widget = QWidget(self)
         layout = QVBoxLayout(central_widget)
-
-        current_password_label = QLabel("Current Password:")
-        self.current_password_input = QLineEdit()
-        self.current_password_input.setEchoMode(QLineEdit.Password)
-        self.current_password_input.returnPressed.connect(self.update_password)
 
         new_password_label = QLabel("New Password:")
         self.new_password_input = QLineEdit()
@@ -30,8 +27,6 @@ class ChangePasswordWindow(QMainWindow):
         submit_button = QPushButton("Submit")
         submit_button.clicked.connect(self.update_password)
 
-        layout.addWidget(current_password_label)
-        layout.addWidget(self.current_password_input)
         layout.addWidget(new_password_label)
         layout.addWidget(self.new_password_input)
         layout.addWidget(confirm_password_label)
@@ -39,22 +34,16 @@ class ChangePasswordWindow(QMainWindow):
         layout.addWidget(submit_button)
 
         self.setCentralWidget(central_widget)
+        self.show()
+
 
     def update_password(self):
-        current_password = self.current_password_input.text()
         new_password = self.new_password_input.text()
         confirm_password = self.confirm_password_input.text()
 
         # Check if any of the fields are empty
-        if not current_password or not new_password or not confirm_password:
+        if not new_password or not confirm_password:
             QMessageBox.about(self, "Error", "Please fill out all fields.")
-            return
-        elif not self.employee_controller.check_password(current_password):
-            QMessageBox.about(self, "Error",
-                              "Current password does not match your previous password. Please speak to your manager to reset your password.")
-
-            self.current_password_input.clear()
-            self.current_password_input.setFocus()
             return
         elif new_password != confirm_password:
             QMessageBox.about(self, "Error", "New passwords do not match")
@@ -65,6 +54,6 @@ class ChangePasswordWindow(QMainWindow):
             self.new_password_input.setFocus()
             return
         else:
-            self.employee_controller.update_password(new_password)
+            self.employer_controller.update_password(new_password, self.user_id_to_reset)
             QMessageBox.about(self, "Success", "Password successfully updated.")
             self.close()
