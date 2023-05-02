@@ -7,7 +7,6 @@ from src.RUPaid.DatabaseConnection import DBConnection
 
 class EmployeeController:
     def __init__(self, employee_data, database_connection: DBConnection, test=None):
-    def __init__(self, employee_data, database_connection: DBConnection, test=None):
         self.employee_data = employee_data
         self.company_name = employee_data[0]
         self.company_name_id = employee_data[1]
