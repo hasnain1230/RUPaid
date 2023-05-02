@@ -6,7 +6,7 @@ from PyQt5.QtCore import *
 
 
 class MessagingController:
-    def __init__(self, user_id, show=True):
+    def __init__(self, user_id, company_id, show=True):
         self.user_id = user_id
         self.db_connection = DBConnection()
         self.ui = MessagingView(self)

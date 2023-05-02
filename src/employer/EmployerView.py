@@ -31,7 +31,7 @@ class EmployerView(QWidget):
         self.timer.timeout.connect(
             lambda: self.controller.logout(timer=self.timer), )  # TODO: Create the function for this
         self.timer.start(300000)
-        self.messaging_controller = MessagingController(self.controller.user_id, show=False)
+        self.messaging_controller = MessagingController(self.controller.user_id, self.controller.company_name_id, show=False)
         self.installEventFilter(self)
 
         layout = QtWidgets.QVBoxLayout()
