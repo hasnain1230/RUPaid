@@ -23,7 +23,7 @@ class EmployerView(QWidget):
         self.hours_view = None
         self.edit_dialog = None
         self.reset_password = None
-        self.setMinimumSize(1500, 440)
+        self.setMinimumSize(1200, 440)
         self.controller = controller
         self.setWindowTitle("RUPaid - Employer")
         self.database = self.controller.db_connection
