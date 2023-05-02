@@ -6,12 +6,15 @@ from PyQt5.QtCore import *
 
 
 class MessagingController:
-    def __init__(self, user_id, company_id):
+    def __init__(self, user_id, show=True):
         self.user_id = user_id
         self.user_company_id = company_id
         self.db_connection = DBConnection()
         self.ui = MessagingView(self)
-        self.ui.show()
+
+        if show:
+            self.ui.show()
+
         self.populate_recipients_list()
 
         self.get_selected_conversation("SYSTEM")
@@ -83,9 +86,19 @@ class MessagingController:
         self.populate_messages_list(selected_user_id)
         return selected_user_id
 
+    def send_message_as_system(self, message, recipient_id):
+        if message == "":
+            return
+
+        if self.db_connection.insert_message(0, recipient_id, len(message), message):
+            # messaging failed to insert
+            self.ui.messageSendTextEdit.setText("")
+            self.populate_messages_list(recipient_id)
+
     def send_message(self, message):
         if message == "":
             return
+
         recipient_id = self.get_selected_conversation(self.ui.recipientSelection.currentText())
         if self.db_connection.insert_message(self.user_id, recipient_id, len(message), message):
             # messaging failed to insert

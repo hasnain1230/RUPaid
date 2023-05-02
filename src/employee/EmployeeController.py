@@ -41,13 +41,11 @@ class EmployeeController:
 
         # if bank account number has stars in it, then return
         if "*" in new_information["Bank Account Number:"]:
-            # Notify user that their information was not saved
-            QtWidgets.QMessageBox.warning(self.ui, "Information Not Changed", "Bank Information was not changed. Please input a valid bank account number.")
-            return
-
+            self.account_number = self.account_number
+        else:
+            self.account_number = new_information["Bank Account Number:"]
 
         self.email = new_information["Email:"]
-        self.account_number = new_information["Bank Account Number:"]
         self.routing_number = new_information["Bank Routing Number:"]
 
         # Update the database
@@ -110,5 +108,3 @@ class EmployeeController:
 
         self.login_page = LoginPage(self.db_connection)
         self.login_page.show()
-
-

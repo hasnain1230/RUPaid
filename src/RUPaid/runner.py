@@ -8,8 +8,11 @@ from src.RUPaid.Login import LoginPage
 
 
 if __name__ == '__main__':
-    app = QApplication(sys.argv)
-    login_page = LoginPage()
-    login_page.show()
-    sys.exit(app.exec_())
+    try:
+        app = QApplication(sys.argv)
+        login_page = LoginPage()
+        login_page.show()
+        sys.exit(app.exec_())
+    except Exception as e:
+        print(e)
 

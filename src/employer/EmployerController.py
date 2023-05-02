@@ -52,7 +52,7 @@ class EmployerController:
 
     def pay_user(self, user_id):
         # Get all the time diffs for the users from the clock_in_out table and round them to the nearest 15 minutes
-        query = "SELECT id, time_diff FROM clock_in_out WHERE user_id = ? AND paid = 0"
+        query = "SELECT id, time_diff FROM clock_in_out WHERE time_diff IS NOT NULL AND user_id = ? AND paid = 0"
         cursor = self.db_connection.get_cursor()
         cursor.execute(query, (user_id,))
         time_diffs = cursor.fetchall()
