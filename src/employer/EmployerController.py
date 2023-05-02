@@ -11,8 +11,8 @@ import copy
 
 
 class EmployerController:
-    def __init__(self, employer_data, database_connection: DBConnection):
-        self.employee_data = employer_data
+    def __init__(self, employer_data, database_connection: DBConnection, test=None):
+        self.employer_data = employer_data
         self.company_name = employer_data[0]
         self.company_name_id = employer_data[1]
         self.user_id = employer_data[2]
@@ -28,9 +28,11 @@ class EmployerController:
         self.routing_number = employer_data[12]
         self.db_connection = database_connection
         self.login_page = None
+        self.test=test
 
-        self.ui = EmployerView(self)
-        self.ui.show()
+        if test is None:
+            self.ui = EmployerView(self)
+            self.ui.show()
 
     def get_all_users(self):
         self.db_connection.commit_transaction()  # Commit any changes to the database and reset the cursor
@@ -175,7 +177,8 @@ class EmployerController:
                 self.company_name, self.company_name_id, username, password_hash, first_name, last_name, role, age,
                 occupation, email, bank_account, bank_routing_number, hourly_rate))
             self.db_connection.commit_transaction()
-            self.ui.populate_table()
+            if self.test is None:
+                self.ui.populate_table()
             return 0
         except mariadb.IntegrityError:
             return 1
@@ -196,7 +199,10 @@ class EmployerController:
             cursor = self.db_connection.get_cursor()
             cursor.execute(query, (user_id,))
             self.db_connection.commit_transaction()
-            self.ui.populate_table()
+            if self.test is None:
+                self.ui.populate_table()
+        if self.test is not None:
+            return 1
 
     def logout(self, timer: QtCore.QTimer = None):
         if timer is not None:
@@ -209,4 +215,7 @@ class EmployerController:
 
         from src.RUPaid.Login import LoginPage
         self.login_page = LoginPage(self.db_connection)
-        self.login_page.show()
+        if self.test is None:
+            self.login_page.show()
+        else:
+            return True

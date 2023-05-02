@@ -1,0 +1,7 @@
+Call the following from the root directory:
+
+python -m pytest -vv --tb=line tests
+
+To run a certain test class from root use:
+
+python -m pytest -vv --tb=line tests/{file_name}.py

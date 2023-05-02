@@ -14,10 +14,8 @@ class MessagingController:
 
         if show:
             self.ui.show()
-
-        self.populate_recipients_list()
-
-        self.get_selected_conversation("SYSTEM")
+            self.populate_recipients_list()
+            self.get_selected_conversation("SYSTEM")
 
     def populate_messages_list(self, recipient_id):
 

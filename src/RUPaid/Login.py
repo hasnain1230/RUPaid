@@ -3,18 +3,18 @@ import os.path
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import *
 from src.constants import constants
-from ScaledPixmapLabel import ScaledPixmapLabel
+from .ScaledPixmapLabel import ScaledPixmapLabel
 
 from src.employer.EmployerController import EmployerController
 
-from DatabaseConnection import DBConnection
+from .DatabaseConnection import DBConnection
 from src.employee.EmployeeController import EmployeeController
 from src.RUPaid.Crypt import Hashing
 import mariadb
 
 
 class LoginPage(QWidget):
-    def __init__(self, database_connection=None):
+    def __init__(self, database_connection=None,test=None):
         super().__init__(parent=None)
         self.employee_controller = None
         self.employer_controller = None
@@ -23,7 +23,9 @@ class LoginPage(QWidget):
         self.username_input = None
         self.password_input = None
         self.login_button = None
-        self.init_ui()
+        self.test=test
+        if test is None:
+            self.init_ui()
 
     def init_ui(self):
         self.setWindowTitle(constants.LOGIN_PAGE)
@@ -71,12 +73,18 @@ class LoginPage(QWidget):
             self.cursor.execute("SELECT * FROM users WHERE user_name = ? AND password = ?", (username, hashed_password))
             results = self.cursor.fetchone()
         except mariadb.Connection.Error as e:
-            QMessageBox.warning(self, "Error", f"Error connecting to database: {e}")
-            return
+            if self.test is None:
+                QMessageBox.warning(self, "Error", f"Error connecting to database: {e}")
+                return
+            else:
+                return -1
 
         if results is not None:
             print("Login successful")
-            QMessageBox.information(self, "Login successful", "Login successful")
+            if self.test is None:
+                QMessageBox.information(self, "Login successful", "Login successful")
+            else:
+                return 1
             if results[7].lower() == "employee":
                 self.close()
                 self.employee_controller = EmployeeController(results, self.database_connection)
@@ -86,7 +94,10 @@ class LoginPage(QWidget):
 
         else:
             print("Login failed")
-            QMessageBox.warning(self, "Login failed!", "Login failed! Either your username or password is incorrect.")
+            if self.test is None:
+                QMessageBox.warning(self, "Login failed!", "Login failed! Either your username or password is incorrect.")
+            else: 
+                return 0
 
     def resizeEvent(self, event):
         # This method is called when the window is resized
