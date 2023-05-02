@@ -129,7 +129,7 @@ class EditDialog(QDialog):
         elif username != self.table.item(selected_row[0].row(), 1).text() and self.controller.check_for_duplicate_username(username):
             QMessageBox.warning(self, "Warning", "Username already exists.")
             return
-        elif int(age) < 18 and int(age) > 100:
+        elif int(age) < 18 or int(age) > 100:
             QMessageBox.warning(self, "Warning", "Age must be between 18 and 100.")
             return
         elif float(hourly_pay) < 0:

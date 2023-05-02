@@ -151,21 +151,26 @@ class EmployeeView(QWidget):
         for row in range(5, self.grid_layout.rowCount()):
             value_label = self.grid_layout.itemAtPosition(row, 1).widget()
 
-            if not isinstance(value_label, QtWidgets.QLineEdit) and isinstance(value_label, QtWidgets.QLabel):
+            if isinstance(value_label, QtWidgets.QLabel):
                 value = value_label.text()
                 value_edit = QtWidgets.QLineEdit()
-
-                if row == 6 or row == 7:
-                    # Only allow numbers for the account number and routing number
-                    value_edit.setValidator(QtGui.QIntValidator())
+                value_edit.returnPressed.connect(self.check_edited_information)
 
                 if row == 6:
                     value_edit.setEchoMode(QtWidgets.QLineEdit.Password)
+                    value_edit.setText(self.controller.get_user_account_number())
+                    value_edit.setValidator(QtGui.QIntValidator())
 
-                value_edit.setText(value)
-                value_edit.returnPressed.connect(self.check_edited_information)
+                elif row == 7:
+                    value_edit.setText(value)
+                    value_edit.setValidator(QtGui.QIntValidator())
+
+                else:
+                    value_edit.setText(value)
+
                 self.grid_layout.replaceWidget(value_label, value_edit)
                 value_label.deleteLater()
+
 
         self.edit_button.setText("Save Changes")
         self.edit_button.clicked.disconnect()
@@ -247,8 +252,7 @@ class EmployeeView(QWidget):
         self.change_password_dialog.show()
 
     def messages_button_clicked(self):
-        self.messaging_controller = MessagingController(self.controller.user_id, self.controller.company_name_id)
-        self.messaging_window = MessagingView(self.messaging_controller)
+        self.messaging_controller = MessagingController(self.controller.user_id, self.controller.company_name_id, show=True)
 
 
     def eventFilter(self, a0: 'QObject', a1: 'QEvent') -> bool:
