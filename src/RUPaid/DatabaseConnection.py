@@ -77,6 +77,7 @@ class DBConnection(QWidget):
         except Exception:
             # POPUP HERE
             print("Failed to send message")
+            return -1
         return 1
 
     def get_employees_hours(self, start, end, id):
