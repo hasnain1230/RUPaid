@@ -20,3 +20,9 @@ def test_wrap_message():
             manually_wrapped += '\n'
         manually_wrapped += char
     assert function_wrapped==manually_wrapped
+
+def test_send_message():
+    msg = "Test Message"
+    cursor = connection.get_cursor()
+    status = connection.insert_message(42, 50, len(msg), msg)
+    assert status == 1
